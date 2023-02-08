@@ -8,3 +8,5 @@ import { Component } from '@angular/core';
 export class AppComponent {
   constructor() {}
 }
+
+  // TODO: change name in package.json - Capitilize App
