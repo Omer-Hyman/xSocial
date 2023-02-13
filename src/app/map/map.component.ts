@@ -1,21 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { Loader } from '@googlemaps/js-api-loader';
+// import { Loader } from '@googlemaps/js-api-loader';
+import { Loader } from 'google-maps';
+// https://github.com/davidkudera/google-maps-loader
 
 @Component({
   selector: 'map-component',
   templateUrl: './map.component.html',
-  styleUrls: ['./map.component.scss'],
+  styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit {
 
-  constructor(
-    private map?: google.maps.Map // move out of constr
-  ) { }
+export class MapComponent implements OnInit {
+  constructor() {}
+  map?: google.maps.Map; // move out of constr
 
   ngOnInit(): void {
-    let loader = new Loader({
-      apiKey: 'REDACTED_SENSITIVE_INFO'
-    });
+    let loader = new Loader('REDACTED_SENSITIVE_INFO');
 
     loader.load().then(() => {
       this.map = new google.maps.Map(
@@ -28,5 +27,4 @@ export class MapComponent implements OnInit {
       );
     })
   }
-
 }

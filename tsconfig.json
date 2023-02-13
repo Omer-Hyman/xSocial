@@ -26,6 +26,7 @@
     "typeRoots": [
       "node_modules/@types",
     ],
+    "skipLibCheck": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
