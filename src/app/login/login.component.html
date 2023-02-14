@@ -1,0 +1,31 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Login or Register
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="medium">Login or Register</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-list>
+    <ion-item>
+      <ion-label></ion-label>
+      <ion-input placeholder="Username"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label></ion-label>
+      <ion-input placeholder="Password"></ion-input>
+    </ion-item>
+  </ion-list>
+  <div class="loginButtons">
+    <ion-button>Login</ion-button>
+    <ion-button>Register</ion-button>
+    <ion-button [routerLink]="['/map']">Continue as guest</ion-button>
+  </div>
+</ion-content>

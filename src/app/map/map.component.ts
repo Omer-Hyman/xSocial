@@ -11,7 +11,7 @@ import { Loader } from 'google-maps';
 
 export class MapComponent implements OnInit {
   constructor() {}
-  map?: google.maps.Map; // move out of constr
+  map?: google.maps.Map;
 
   ngOnInit(): void {
     let loader = new Loader('REDACTED_SENSITIVE_INFO');
@@ -22,7 +22,8 @@ export class MapComponent implements OnInit {
         {
           center: { lat: 53.379590, lng: -1.478930 },
           zoom: 13,
-          zoomControl: false
+          // zoomControl: false,
+          disableDefaultUI: true
         } as google.maps.MapOptions
       );
     })

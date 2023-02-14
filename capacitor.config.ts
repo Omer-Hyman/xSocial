@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'io.ionic.starter',
-  appName: 'fypApp',
+  appName: 'xSocial',
   webDir: 'www',
   bundledWebRuntime: false
 };
