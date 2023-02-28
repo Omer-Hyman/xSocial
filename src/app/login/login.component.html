@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<!-- <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
       Login or Register
@@ -11,15 +11,45 @@
     <ion-toolbar>
       <ion-title size="medium">Login or Register</ion-title>
     </ion-toolbar>
+  </ion-header> -->
+
+<app-nav-bar title="Login or Register"></app-nav-bar>
+
+<ion-content>
+
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="medium">Login or Register</ion-title>
+    </ion-toolbar>
   </ion-header>
-  
-  <ion-list>
+
+  <!-- make submitForm -->
+  <form [formGroup]="loginForm" (ngSubmit)="submitForm()">
+    <ion-item *ngIf="registerMode">
+      <ion-input formControlName="displayName" placeholder="Display Name"></ion-input>
+    </ion-item>
     <ion-item>
-      <ion-label></ion-label>
+      <!-- <ion-label></ion-label> -->
+      <ion-input formControlName="username" placeholder="Username"></ion-input>
+    </ion-item>
+    <ion-item>
+      <!-- <ion-label></ion-label> -->
+      <ion-input formControlName="password" placeholder="Password" type="password"></ion-input>
+    </ion-item>
+    <div class="loginButtons">
+      <ion-button type="submit">Login</ion-button>
+      <ion-button (click)="registerMode =! registerMode">Register</ion-button>
+      <ion-button [routerLink]="['/map']">Continue as guest</ion-button>
+    </div>
+  </form>
+
+  <!-- pomodoro 6 done -->
+
+  <!-- <ion-list>
+    <ion-item>
       <ion-input placeholder="Username"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label></ion-label>
       <ion-input placeholder="Password"></ion-input>
     </ion-item>
   </ion-list>
@@ -27,5 +57,5 @@
     <ion-button>Login</ion-button>
     <ion-button>Register</ion-button>
     <ion-button [routerLink]="['/map']">Continue as guest</ion-button>
-  </div>
+  </div> -->
 </ion-content>

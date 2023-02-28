@@ -27,7 +27,6 @@
         "@capacitor/keyboard": "4.1.1",
         "@capacitor/preferences": "^4.0.2",
         "@capacitor/status-bar": "4.1.1",
-        "@googlemaps/js-api-loader": "^1.15.1",
         "@ionic/angular": "^6.1.9",
         "@ionic/pwa-elements": "^3.1.1",
         "capacitor": "0.5.5",
