@@ -1,0 +1,21 @@
+<!-- <ion-content> -->
+<app-nav-bar title="Create spot"></app-nav-bar>
+<form [formGroup]="editSpotForm" (ngSubmit)="submitForm()">
+  <ion-list>
+    <ion-item>
+      <ion-input formControlName="spotName" placeholder="Spot name"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-select formControlName="sportDropdown" placeholder="Suitable for:" [multiple]="true">
+        <ion-select-option value="skateboard">Skateboarding</ion-select-option>
+        <ion-select-option value="bmx">BMXing</ion-select-option>
+        <ion-select-option value="scooter">Scooter riding</ion-select-option>
+        <ion-select-option value="rollerBlade">Roller blading</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+</form>
+<div id="mapContainer">
+  <div id="map"></div>
+</div>
+<!-- </ion-content> --> 

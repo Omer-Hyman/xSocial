@@ -9,9 +9,10 @@ import { MapComponent } from './map/map.component';
 import { RouterModule } from '@angular/router';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CreateSpotComponent } from './create-spot/create-spot.component';
 
 @NgModule({
-  declarations: [AppComponent, MapComponent, LoginComponent, NavBarComponent],
+  declarations: [AppComponent, MapComponent, LoginComponent, NavBarComponent, CreateSpotComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -19,7 +20,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     RouterModule.forRoot([
       { path: '', redirectTo: '/login', pathMatch: 'full' },
       { path: 'login', component: LoginComponent, title: 'Login or register' },
-      { path: 'map', component: MapComponent, title: 'Map' }
+      { path: 'map', component: MapComponent, title: 'Map' },
+      { path: 'create-spot', component: CreateSpotComponent, title: 'Create spot' }
     ]),
     ReactiveFormsModule
   ],

@@ -1,0 +1,21 @@
+// #checkboxList {
+//     display: flex;
+
+//     ion-label {
+//         padding-right: 0.5rem;
+//     }
+// }
+
+// ion-content {
+//     z-index: 2000;
+// }
+
+#mapContainer {
+    width: 90%;
+    height: 70%;
+    #map {
+        height: 40%;
+        width: 40%;
+        overflow: visible;
+    }
+}
