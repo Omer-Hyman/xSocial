@@ -22,12 +22,10 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    console.log("login page instantiated!");
-    console.log("register mode = " + this.registerMode);
+  ngOnInit(): void {
    }
   
-  submitForm() { 
+  public submitForm(): void { 
     console.log("Submitted with details: ");
     console.log(this.loginForm.value);
     if (this.loginForm.valid) {

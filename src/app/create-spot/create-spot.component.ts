@@ -12,11 +12,12 @@ import mapStyleOptions from '../../mapStyleOptions.json'
 })
 export class CreateSpotComponent implements OnInit {
 
-  editSpotForm: FormGroup;
-  map?: google.maps.Map;
-  // locationSelected!: google.maps.LatLng;
-  importedLat: number;
-  importedLang: number;
+  loader = new Loader('REDACTED_SENSITIVE_INFO');
+  mapCanvas!: HTMLElement;
+  editSpotForm!: FormGroup;
+  map!: google.maps.Map;
+  spotCoords!: google.maps.LatLng;
+  mapOptions!: google.maps.MapOptions;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -25,36 +26,41 @@ export class CreateSpotComponent implements OnInit {
       spotName: [''],
       sportDropdown: ['']
     })
-    this.importedLat = history.state.lat;
-    this.importedLang = history.state.lng;
-    // this.locationSelected = history.state.location;
-    console.log(typeof this.importedLat);
-    console.log(typeof this.importedLang);
-    // console.log(typeof history.state.location)
-  }
+    // this.spotCoords = new google.maps.LatLng(history.state.lat, history.state.lng);
+    // console.log(this.spotCoords);
+    // console.log(this.spotCoords.lat());
+    // console.log(this.spotCoords.lng());
 
-  ngOnInit() {
-    // console.log(history.state.location);
-    // console.log(this.locationSelected.lat);
-    // console.log(this.locationSelected.lng);
-
-    let loader = new Loader('REDACTED_SENSITIVE_INFO');
-    var mapCanvas = document.getElementById("map") as HTMLElement;
-    var mapOptions = {
-      // center: this.locationSelected as google.maps.LatLng,
-      center: { lat: this.importedLat, lng: this.importedLang },
+    // FIXME: lat and lang are recieved properly iinto this component but mapOptions doesn't like it....
+    console.log(history.state.lat);
+    console.log(history.state.lng);
+    this.mapOptions = {
+      center:  new google.maps.LatLng(history.state.lat, history.state.lng),
       zoom: 13,
       disableDefaultUI: true,
       styles: mapStyleOptions
     } as google.maps.MapOptions;
+  }
 
-    loader.load().then(() => {
-      this.map = new google.maps.Map(mapCanvas, mapOptions);
+  // TODO: Change styling of this map? - Need to get rid of the small information bar at the bottom of the map
+
+  ngOnInit(): void {
+    this.loader.load().then(() => {
+      this.mapCanvas = document.getElementById("map") as HTMLElement;
+      this.map = new google.maps.Map(this.mapCanvas, this.mapOptions);
+      this.placeMarker();
     });
   }
 
-  submitForm(): void {
-
+  private placeMarker(): void {
+    // this.marker?.setMap(null);
+    new google.maps.Marker({
+      position:  new google.maps.LatLng(history.state.lat, history.state.lng),
+      map: this.map
+    })
   }
 
+  public submitForm(): void {
+
+  }
 }
