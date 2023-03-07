@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Loader } from 'google-maps';
 import { Subscription } from 'rxjs';
 import mapStyleOptions from '../../mapStyleOptions.json'
+import { MapService } from '../map.service';
 
 @Component({
   selector: 'app-create-spot',
@@ -12,55 +13,33 @@ import mapStyleOptions from '../../mapStyleOptions.json'
 })
 export class CreateSpotComponent implements OnInit {
 
-  loader = new Loader('REDACTED_SENSITIVE_INFO');
-  mapCanvas!: HTMLElement;
-  editSpotForm!: FormGroup;
-  map!: google.maps.Map;
-  spotCoords!: google.maps.LatLng;
-  mapOptions!: google.maps.MapOptions;
+  public editSpotForm!: FormGroup;
+  private spotCoords!: google.maps.LatLng;
+  private mapOptions!: google.maps.MapOptions;
 
   constructor(
     private formBuilder: FormBuilder,
+    private mapService: MapService
   ) {
     this.editSpotForm = this.formBuilder.group({
       spotName: [''],
       sportDropdown: ['']
     })
-    // this.spotCoords = new google.maps.LatLng(history.state.lat, history.state.lng);
-    // console.log(this.spotCoords);
-    // console.log(this.spotCoords.lat());
-    // console.log(this.spotCoords.lng());
-
-    // FIXME: lat and lang are recieved properly iinto this component but mapOptions doesn't like it....
-    console.log(history.state.lat);
-    console.log(history.state.lng);
+    this.spotCoords = new google.maps.LatLng(history.state.lat, history.state.lng);
     this.mapOptions = {
-      center:  new google.maps.LatLng(history.state.lat, history.state.lng),
-      zoom: 13,
+      center: JSON.parse(JSON.stringify(this.spotCoords)),
+      zoom: 14,
       disableDefaultUI: true,
-      styles: mapStyleOptions
-    } as google.maps.MapOptions;
+      styles: mapStyleOptions as google.maps.MapTypeStyle[]
+    };
   }
 
   // TODO: Change styling of this map? - Need to get rid of the small information bar at the bottom of the map
 
-  ngOnInit(): void {
-    this.loader.load().then(() => {
-      this.mapCanvas = document.getElementById("map") as HTMLElement;
-      this.map = new google.maps.Map(this.mapCanvas, this.mapOptions);
-      this.placeMarker();
-    });
+  async ngOnInit(): Promise<void> {
+    await this.mapService.initialiseMap(this.mapOptions);
+    this.mapService.setMarker(this.spotCoords);
   }
 
-  private placeMarker(): void {
-    // this.marker?.setMap(null);
-    new google.maps.Marker({
-      position:  new google.maps.LatLng(history.state.lat, history.state.lng),
-      map: this.map
-    })
-  }
-
-  public submitForm(): void {
-
-  }
+  public submitForm(): void { }
 }
