@@ -9,6 +9,10 @@ export interface User {
 }
 
 export interface Spot {
-    location: string; // possibly an object
+    name: string;
+    description?: string;
+    latitude: number;
+    longitude: number;
+    suitableFor: ['skateboard' | 'bmx' | 'scooter' | 'roller']
 }
 

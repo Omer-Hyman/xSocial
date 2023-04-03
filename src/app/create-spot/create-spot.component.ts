@@ -1,10 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { Loader } from 'google-maps';
-import { Subscription } from 'rxjs';
 import mapStyleOptions from '../../mapStyleOptions.json'
 import { MapService } from '../map.service';
+import { Router } from '@angular/router';
+import { Spot } from '../interfaces';
 
 @Component({
   selector: 'app-create-spot',
@@ -19,10 +18,12 @@ export class CreateSpotComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private mapService: MapService
+    private mapService: MapService,
+    private router: Router
   ) {
     this.editSpotForm = this.formBuilder.group({
       spotName: [''],
+      spotDescription: [''],
       sportDropdown: ['']
     })
     this.spotCoords = new google.maps.LatLng(history.state.lat, history.state.lng);
@@ -41,5 +42,32 @@ export class CreateSpotComponent implements OnInit {
     this.mapService.setMarker(this.spotCoords);
   }
 
-  public submitForm(): void { }
-}
+  public submitForm(): void {
+    this.router.navigate(['/map']);
+    const newSpot: Spot = {
+      name: this.editSpotForm.get('spotName')?.value,
+      description: this.editSpotForm.get('spotDescription')?.value,
+      latitude: this.spotCoords.lat(),
+      longitude: this.spotCoords.lng(),
+      suitableFor: this.editSpotForm.get('sportDropdown')?.value[0]
+    }
+    console.log('Spot created...');
+    this.postToDB(newSpot);
+  }
+
+  public async postToDB(spot: Spot): Promise<void> {
+    const username = 'admin';
+    const password = 'REDACTED_SENSITIVE_INFO';
+    console.log("trying with: ");
+    console.log(spot);
+    console.log(JSON.stringify(spot));
+    const results = await fetch('http://localhost:8000/spots/', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Basic ' + btoa(username + ':' + password),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(spot)
+    });
+    console.log(results);
+  }}
