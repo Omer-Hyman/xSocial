@@ -20,12 +20,8 @@ export class MapComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await this.mapService.initialiseMap();
-    this.mapService.clearMarkers();
-    if (history.state.spot) {
-      // const markerLocation = new google.maps.LatLng(history.state.spot.latitude, history.state.spot.longitude);
-      // console.log(markerLocation);
-      this.mapService.setMarker(new google.maps.LatLng(history.state.spot.latitude, history.state.spot.longitude));
-    }
+    // this.mapService.clearMarkers();
+    this.mapService.setMarkersFromDB();
     google.maps.event.addListener(this.mapService.getMap(), 'click', ((event) => {
       this.router.navigate(['/create-spot'], { state: { lat: event.latLng.lat(), lng: event.latLng.lng() } });
     }))

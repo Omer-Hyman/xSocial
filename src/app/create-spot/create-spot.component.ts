@@ -4,6 +4,7 @@ import mapStyleOptions from '../../mapStyleOptions.json'
 import { MapService } from '../map.service';
 import { Router } from '@angular/router';
 import { Spot } from '../interfaces';
+import { ApiService } from '../api.service';
 
 @Component({
   selector: 'app-create-spot',
@@ -19,7 +20,8 @@ export class CreateSpotComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private mapService: MapService,
-    private router: Router
+    private router: Router,
+    private apiService: ApiService
   ) {
     this.editSpotForm = this.formBuilder.group({
       spotName: [''],
@@ -39,7 +41,6 @@ export class CreateSpotComponent implements OnInit {
   // TODO: add validation to the form
 
   async ngOnInit(): Promise<void> {
-    
     await this.mapService.initialiseMap(this.mapOptions);
     this.mapService.setMarker(this.spotCoords);
   }
@@ -54,28 +55,6 @@ export class CreateSpotComponent implements OnInit {
     };
     this.router.navigate(['/map'], { state: { spot: newSpot }});
     console.log('Spot created...');
-    this.postToDB(newSpot);
-  }
-
-  public async postToDB(spot: Spot): Promise<void> {
-    const username = 'admin';
-    const password = 'REDACTED_SENSITIVE_INFO';
-    console.log("trying with: ");
-    console.log(spot);
-    console.log(JSON.stringify(spot));
-    try {
-      const results = await fetch('http://localhost:8000/spots/', {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Basic ' + btoa(username + ':' + password),
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(spot)
-      });
-      console.log(results);
-    } catch (error) {
-      console.log('Create spot POST failed: ' + error);
-    }
-
+    this.apiService.postSpot(newSpot);
   }
 }

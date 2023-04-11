@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Loader } from 'google-maps';
 import mapStyleOptions from '../mapStyleOptions.json'
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,9 @@ export class MapService {
     styles: mapStyleOptions as google.maps.MapTypeStyle[]
   }
 
-  constructor() { }
+  constructor(
+    private apiService: ApiService
+  ) { }
 
   public getMap(): google.maps.Map {
     return this.map;
@@ -28,7 +31,7 @@ export class MapService {
     this.map = new google.maps.Map(document.getElementById("map") as HTMLElement, mapOptions ?? this.defaultMapOptions);
   }
 
-  public clearMarkers(): void {
+  public clearMarkers(): void {  
     for (let i = 0; i < this.markers.length; i++) {
       this.markers[i].setMap(null);
     }
@@ -40,5 +43,17 @@ export class MapService {
       map: this.map
     }));
     console.log('Marker set!' + markerCoords);
+  }
+
+  public async setMarkersFromDB(): Promise<void> { // TODO: maybe do this as an observable/subscription?
+    const spots = await this.apiService.getSpots();
+    if (spots) {
+      for (const spot of spots) {
+        this.markers.push(new google.maps.Marker({
+          position: { lat: spot.latitude, lng: spot.longitude },
+          map: this.map
+        }));
+      }
+    }
   }
 }
