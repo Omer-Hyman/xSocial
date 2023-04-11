@@ -19,12 +19,13 @@ export class MapComponent implements OnInit {
   // FIXME: content goes below device bottom border?
 
   async ngOnInit(): Promise<void> {
-    if (history.state.spot !== undefined) {
-      const markerLocation = new google.maps.LatLng(history.state.spot.latitude, history.state.spot.longitude);
-      console.log(markerLocation);
+    await this.mapService.initialiseMap();
+    this.mapService.clearMarkers();
+    if (history.state.spot) {
+      // const markerLocation = new google.maps.LatLng(history.state.spot.latitude, history.state.spot.longitude);
+      // console.log(markerLocation);
       this.mapService.setMarker(new google.maps.LatLng(history.state.spot.latitude, history.state.spot.longitude));
     }
-    await this.mapService.initialiseMap();
     google.maps.event.addListener(this.mapService.getMap(), 'click', ((event) => {
       this.router.navigate(['/create-spot'], { state: { lat: event.latLng.lat(), lng: event.latLng.lng() } });
     }))
