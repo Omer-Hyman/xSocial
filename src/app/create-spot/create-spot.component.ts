@@ -36,21 +36,23 @@ export class CreateSpotComponent implements OnInit {
   }
 
   // TODO: Change styling of this map? - Need to get rid of the small information bar at the bottom of the map
+  // TODO: add validation to the form
 
   async ngOnInit(): Promise<void> {
+    
     await this.mapService.initialiseMap(this.mapOptions);
     this.mapService.setMarker(this.spotCoords);
   }
 
   public submitForm(): void {
-    this.router.navigate(['/map']);
     const newSpot: Spot = {
       name: this.editSpotForm.get('spotName')?.value,
       description: this.editSpotForm.get('spotDescription')?.value,
       latitude: this.spotCoords.lat(),
       longitude: this.spotCoords.lng(),
       suitableFor: this.editSpotForm.get('sportDropdown')?.value[0]
-    }
+    };
+    this.router.navigate(['/map'], { state: { spot: newSpot }});
     console.log('Spot created...');
     this.postToDB(newSpot);
   }
@@ -61,13 +63,19 @@ export class CreateSpotComponent implements OnInit {
     console.log("trying with: ");
     console.log(spot);
     console.log(JSON.stringify(spot));
-    const results = await fetch('http://localhost:8000/spots/', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Basic ' + btoa(username + ':' + password),
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(spot)
-    });
-    console.log(results);
-  }}
+    try {
+      const results = await fetch('http://localhost:8000/spots/', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Basic ' + btoa(username + ':' + password),
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(spot)
+      });
+      console.log(results);
+    } catch (error) {
+      console.log('Create spot POST failed: ' + error);
+    }
+
+  }
+}

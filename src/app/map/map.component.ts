@@ -1,9 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import assert from 'assert';
-import { Loader } from 'google-maps';
-import mapStyleOptions from '../../mapStyleOptions.json'
+import { Component, Input, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MapService } from '../map.service';
+import { Spot } from '../interfaces';
 
 @Component({
   selector: 'map-component',
@@ -12,18 +10,24 @@ import { MapService } from '../map.service';
 })
 
 export class MapComponent implements OnInit {
-
   constructor(
     private router: Router,
-    private mapService: MapService
+    private mapService: MapService,
+    private route: ActivatedRoute
   ) { }
 
   // FIXME: content goes below device bottom border?
 
   async ngOnInit(): Promise<void> {
+    if (history.state.spot !== undefined) {
+      const markerLocation = new google.maps.LatLng(history.state.spot.latitude, history.state.spot.longitude);
+      console.log(markerLocation);
+      this.mapService.setMarker(new google.maps.LatLng(history.state.spot.latitude, history.state.spot.longitude));
+    }
     await this.mapService.initialiseMap();
     google.maps.event.addListener(this.mapService.getMap(), 'click', ((event) => {
       this.router.navigate(['/create-spot'], { state: { lat: event.latLng.lat(), lng: event.latLng.lng() } });
     }))
+    
   }
 }

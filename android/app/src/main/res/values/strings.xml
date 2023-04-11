@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">xSocial</string>
+    <string name="title_activity_main">xSocial</string>
+    <string name="package_name">com.friedOmelette.app</string>
+    <string name="custom_url_scheme">com.friedOmelette.app</string>
+</resources>

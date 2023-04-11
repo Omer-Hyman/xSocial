@@ -29,11 +29,16 @@ export class MapService {
     return this.map;
   }
 
+  public clearMarkers(): void {
+    this.marker?.setMap(null);
+  }
+
   public setMarker(markerCoords: google.maps.LatLng):void {
     this.marker?.setMap(null);
     this.marker = new google.maps.Marker({
       position: JSON.parse(JSON.stringify(markerCoords)),
       map: this.map
     })
+    console.log('Marker set!' + markerCoords);
   }
 }
