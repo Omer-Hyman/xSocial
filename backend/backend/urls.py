@@ -23,8 +23,9 @@ router.register(r'users', views.UserViewSet)
 router.register(r'spots', views.SpotViewSet)
 
 urlpatterns = [
-    path('database/', include('database.urls')),
     path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('', include(router.urls)),
+    path('api-user-login/', views.UserLogIn.as_view()),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    # path('database/', include('database.urls')),
 ]

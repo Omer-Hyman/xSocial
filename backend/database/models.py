@@ -1,12 +1,24 @@
 from django.db import models
 from multiselectfield import MultiSelectField
+from django.conf import settings
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import User
+# from django.contrib.auth.models import AbstractUser
 
-class User(models.Model):
-    displayName = models.CharField(max_length=10, default='name')
-    username = models.CharField(max_length=10)
-    password = models
+# class User(models.Model):
+#     displayName = models.CharField(max_length=10, default='name')
+#     username = models.CharField(max_length=10)
+#     password = models
     # django.contrib.auth.models.User
     # django can do the hashing for me apparently
+
+# class User(AbstractUser):
+#     displayName = models.CharField(max_length=10)
+    
+#     def __str__(self):
+#         return self.username
 
 # class Option(models.Model):
 #     sportChoices = [
@@ -16,6 +28,11 @@ class User(models.Model):
 #         ('roller', 'Rollerblading')
 #     ]
 #     name = models.CharField(max_length=10, choices=sportChoices, unique=True)
+
+@receiver(post_save, sender=User)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
 
 sportChoices = (
         ('skateboard', 'Skateboarding'),

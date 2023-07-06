@@ -1,11 +1,13 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, JsonResponse
-from django.contrib.auth import authenticate, login
+# from django.shortcuts import render, redirect
+# from django.http import HttpResponse, JsonResponse
+# from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
 from rest_framework import viewsets, permissions
 from database.serializers import UserSerializer, SpotSerializer
 from database.models import Spot
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -14,6 +16,18 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+class UserLogIn(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token = Token.objects.get(user=user)
+        return Response({
+            'token': token.key,
+            'id': user.pk,
+            'username': user.username
+        })
 
 class SpotViewSet(viewsets.ModelViewSet):
     """
