@@ -1,0 +1,27 @@
+<ion-content>
+  <app-nav-bar title="Login or Register"></app-nav-bar>
+
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="medium">Login or Register</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- make submitForm -->
+  <form [formGroup]="loginForm" (ngSubmit)="submitForm()">
+    <ion-item *ngIf="registerMode">
+      <ion-input formControlName="displayName" placeholder="Display Name"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input formControlName="username" placeholder="Username"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input formControlName="password" placeholder="Password" type="password"></ion-input>
+    </ion-item>
+    <div class="loginButtons">
+      <ion-button type="submit">Login</ion-button>
+      <ion-button (click)="registerMode =! registerMode">Register</ion-button>
+      <ion-button [routerLink]="['/map']">Continue as guest</ion-button>
+    </div>
+  </form>
+</ion-content>
