@@ -10,6 +10,9 @@ import { ApiService } from '../api.service';
   selector: 'app-create-spot',
   templateUrl: './create-spot.component.html',
   styleUrls: ['./create-spot.component.scss'],
+  host: {
+    class: 'component'
+  }
 })
 export class CreateSpotComponent implements OnInit {
 
@@ -42,6 +45,7 @@ export class CreateSpotComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await this.mapService.initialiseMap(this.mapOptions);
+    this.mapService.clearMarkers();
     this.mapService.setMarker(this.spotCoords);
   }
 
@@ -51,10 +55,11 @@ export class CreateSpotComponent implements OnInit {
       description: this.editSpotForm.get('spotDescription')?.value,
       latitude: this.spotCoords.lat(),
       longitude: this.spotCoords.lng(),
-      suitableFor: this.editSpotForm.get('sportDropdown')?.value[0]
+      suitableFor: this.editSpotForm.get('sportDropdown')?.value
     };
     this.router.navigate(['/map'], { state: { spot: newSpot }});
     console.log('Spot created...');
     this.apiService.postSpot(newSpot);
+    // TODO: stay on same page or redirect based on api request response
   }
 }

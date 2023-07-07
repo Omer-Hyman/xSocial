@@ -9,6 +9,7 @@ import { MapComponent } from './map/map.component';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CreateSpotComponent } from './create-spot/create-spot.component';
+import { SpotViewComponent } from './spot-view/spot-view.component';
 
 @NgModule({
   declarations: [
@@ -16,11 +17,12 @@ import { CreateSpotComponent } from './create-spot/create-spot.component';
     MapComponent, 
     LoginComponent, 
     NavBarComponent, 
-    CreateSpotComponent
+    CreateSpotComponent,
+    SpotViewComponent
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(),
+    IonicModule.forRoot({}),
     AppRoutingModule,
     ReactiveFormsModule
   ],

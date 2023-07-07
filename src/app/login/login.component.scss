@@ -1,9 +1,13 @@
+:host(.component) {
+    height: 100%;
+}
+
 form {
     display: flex;
     flex-direction: column;
     height: 100%;
 
-    .loginButtons {
+    .loginButtons, .registerButtons {
         display: flex;
         flex-wrap: wrap;
         margin: 0.5rem;

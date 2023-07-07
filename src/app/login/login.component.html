@@ -7,11 +7,10 @@
     </ion-toolbar>
   </ion-header>
 
-  <!-- make submitForm -->
-  <form [formGroup]="loginForm" (ngSubmit)="submitForm()">
-    <ion-item *ngIf="registerMode">
-      <ion-input formControlName="displayName" placeholder="Display Name"></ion-input>
-    </ion-item>
+  <ion-button (click)="registerMode =! registerMode">Switch to {{registerMode ? 'Login' : 'Register' }}</ion-button>
+
+
+  <form [formGroup]="loginForm" (ngSubmit)="login()" *ngIf="!registerMode">
     <ion-item>
       <ion-input formControlName="username" placeholder="Username"></ion-input>
     </ion-item>
@@ -20,8 +19,24 @@
     </ion-item>
     <div class="loginButtons">
       <ion-button type="submit">Login</ion-button>
-      <ion-button (click)="registerMode =! registerMode">Register</ion-button>
+      <ion-button [routerLink]="['/map']">Continue as guest</ion-button>
+    </div>
+  </form>
+  <form [formGroup]="registerForm" (ngSubmit)="register()" *ngIf="registerMode">
+    <ion-item>
+      <ion-input formControlName="displayName" placeholder="Display Name"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input formControlName="username" placeholder="Username"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input formControlName="password" placeholder="Password" type="password"></ion-input>
+    </ion-item>
+    <div class="registerButtons">
+      <ion-button type="submit">Register</ion-button>
       <ion-button [routerLink]="['/map']">Continue as guest</ion-button>
     </div>
   </form>
 </ion-content>
+<router-outlet></router-outlet>
+<!-- TODO: not sure what router-outlet does -->

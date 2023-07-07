@@ -8,7 +8,7 @@
       <ion-input formControlName="spotDescription" placeholder="Spot description"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-select formControlName="sportDropdown" placeholder="Suitable for:" [multiple]="true">
+      <ion-select label="yoyo" formControlName="sportDropdown" placeholder="Suitable for:" [multiple]="true" >
         <ion-select-option value="skateboard">Skateboarding</ion-select-option>
         <ion-select-option value="bmx">BMXing</ion-select-option>
         <ion-select-option value="scooter">Scooter riding</ion-select-option>
@@ -20,5 +20,6 @@
     <div id="map"></div>
   </div>
   <ion-button type="submit">Save</ion-button>
-  <ion-button>Cancel</ion-button>
+  <ion-button [routerLink]="['/map']">Cancel</ion-button>
 </form>
+<router-outlet></router-outlet>

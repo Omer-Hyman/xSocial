@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Loader } from 'google-maps';
 import mapStyleOptions from '../mapStyleOptions.json'
 import { ApiService } from './api.service';
+import { Subject } from 'rxjs';
+import { Spot } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -9,29 +11,46 @@ import { ApiService } from './api.service';
 export class MapService {
 
   private loader = new Loader('REDACTED_SENSITIVE_INFO');
-  private map!: google.maps.Map;
+  private map?: google.maps.Map;
   private markers: google.maps.Marker[] = [];
   private defaultMapOptions: google.maps.MapOptions = {
-    center: { lat: 53.379590, lng: -1.478930 }, //TODO: maybe change to current device location? idk
+    center: { lat: 53.379590, lng: -1.478930 }, //TODO: maybe change to current device location? or where all markers are in view
     zoom: 13,
     disableDefaultUI: true,
     styles: mapStyleOptions as google.maps.MapTypeStyle[]
   }
+  private markerSubject = new Subject<Spot>();
 
   constructor(
     private apiService: ApiService
   ) { }
 
-  public getMap(): google.maps.Map {
+  public getMap(): google.maps.Map | undefined {
     return this.map;
   }
 
   public async initialiseMap(mapOptions?: google.maps.MapOptions): Promise<void> {
     await this.loader.load();
-    this.map = new google.maps.Map(document.getElementById("map") as HTMLElement, mapOptions ?? this.defaultMapOptions);
+    if (this.map) {
+      console.log('Map already exists. Just moving it.');
+      this.moveMap(mapOptions);
+    } else {
+      console.log('New map created.')
+      this.map = new google.maps.Map(document.getElementById("map") as HTMLElement, mapOptions ?? this.defaultMapOptions);
+    }
   }
 
-  public clearMarkers(): void {  
+  public moveMap(newMapOptions?: google.maps.MapOptions): void {
+    const newMapElement = document.getElementById("map") as HTMLElement;
+    if (this.map) {
+      google.maps.event.clearListeners(this.map, 'click');
+      newMapElement.appendChild(this.map.getDiv());
+    }
+    this.map?.setOptions(newMapOptions ?? this.defaultMapOptions);
+
+  }
+
+  public clearMarkers(): void {
     for (let i = 0; i < this.markers.length; i++) {
       this.markers[i].setMap(null);
     }
@@ -48,12 +67,21 @@ export class MapService {
   public async setMarkersFromDB(): Promise<void> { // TODO: maybe do this as an observable/subscription?
     const spots = await this.apiService.getSpots();
     if (spots) {
+      this.markers = [];
       for (const spot of spots) {
-        this.markers.push(new google.maps.Marker({
+        const marker = new google.maps.Marker({
           position: { lat: spot.latitude, lng: spot.longitude },
           map: this.map
-        }));
+        });
+        this.markers.push(marker);
+        marker.addListener("click", () => {
+          this.markerSubject.next(spot);
+        })
       }
     }
+  }
+
+  public getMarkerObservable() {
+    return this.markerSubject.asObservable();
   }
 }

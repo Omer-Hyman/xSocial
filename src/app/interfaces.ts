@@ -1,5 +1,7 @@
 export interface User {
-    displayName: string;
+    username: string;
+    displayName?: string;
+    password: string;
     firstName?: string;
     lastName?: string;
     gender?: 'male' | 'female';
@@ -13,6 +15,12 @@ export interface Spot {
     description?: string;
     latitude: number;
     longitude: number;
-    suitableFor: ['skateboard' | 'bmx' | 'scooter' | 'roller']
+    suitableFor: ('skateboard' | 'bmx' | 'scooter' | 'roller')[]
 }
+
+export interface LoggedInUser {
+    id: number,
+    token: string,
+    username: string
+  }
 
