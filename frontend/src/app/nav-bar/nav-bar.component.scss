@@ -1,0 +1,29 @@
+.toolbar {
+    display: flex;
+    align-items: center;
+    padding-left: 0.5rem;
+
+    ion-title {
+        padding: 0.7rem;
+    }
+}
+
+#burger-menu {
+    --max-width: 15rem;
+
+    #burgerMenuTitle {
+        text-align: center;
+    }
+
+    #burgerMenuButtons {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+
+        ion-item {
+            width: 100%;
+            flex-grow: 1;
+            justify-content: center;
+        }
+    }
+}

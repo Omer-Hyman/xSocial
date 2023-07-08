@@ -1,0 +1,7 @@
+{
+  "name": "fypApp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
