@@ -1,0 +1,15 @@
+# Dependency directories
+node_modules/
+dist/
+
+# Environment variables
+.env
+
+# IDE and editor files
+.angular/
+.vscode/
+.DS_Store
+
+# Logs and build files
+logs/
+build/

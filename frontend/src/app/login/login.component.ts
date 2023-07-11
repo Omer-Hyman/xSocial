@@ -1,8 +1,9 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from '../api.service';
 import { LoggedInUser, User } from '../interfaces';
+import { LocalStorageService } from '../local-storage.service';
 
 
 @Component({
@@ -15,14 +16,17 @@ import { LoggedInUser, User } from '../interfaces';
 })
 
 export class LoginComponent implements OnInit {
-  loginForm: FormGroup;
-  registerForm: FormGroup;
-  registerMode = false;
+  public loginForm: FormGroup;
+  public registerForm: FormGroup;
+  public registerMode = false;
+  public invalidLogin = false;
+  public registerErrorMessages?: string[];
 
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private storage: LocalStorageService
   ) {
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
@@ -35,49 +39,51 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  public ngOnInit(): void {
-  }
+  public ngOnInit(): void { }
 
+  // TODO: pass userID around in route params? and then get user data from that
   public async login(): Promise<void> {
-    console.log("Logging in with details: ");
-    console.log(this.loginForm.value);
+    this.invalidLogin = false;
     if (this.loginForm.valid) {
       const result = await this.apiService.login(this.loginForm.get('username')?.value, this.loginForm.get('password')?.value);
-      if (result) {
-        this.setLoggedInUser(result);
-        this.router.navigate(['/map']);
-        // pass userID around in route params? and then get user data from that
-      }
+      result ? this.router.navigate(['/map']) : this.invalidLogin = true;
     } else {
+      this.invalidLogin = true;
       this.loginForm.markAllAsTouched();
-      console.log("Login form is invalid!");
     }
   }
 
-  private setLoggedInUser(userData: LoggedInUser): void {
-    if (localStorage.getItem('userData') !== JSON.stringify(userData)) {
-      localStorage.setItem('userData', JSON.stringify(userData));
-    }
-   }
-
-  //  TODO: DO NPM INSTALLS!!!
+  // TODO: put all services into their own folder I guess
 
   public async register(): Promise<void> {
+    this.registerErrorMessages = [];
     console.log("Registering new user with details: ");
     console.log(this.registerForm.value);
     if (this.registerForm.valid) {
       const newUser: User = {
-        username: this.registerForm.get('username')?.value,
         // displayName: this.registerForm.get('displayName')?.value,
+        username: this.registerForm.get('username')?.value,
         password: this.registerForm.get('password')?.value
       }
-      const result = await this.apiService.createNewUser(newUser);
-      if (result === 201) {
-        this.router.navigate(['/map']);
+      const registerResult = await this.apiService.createNewUser(newUser);
+      if (registerResult[0] === 'ok') {
+        const loginResult = await this.apiService.login(this.loginForm.get('username')?.value, this.loginForm.get('password')?.value);
+        if (loginResult) {
+          this.router.navigate(['/map']);
+        } else {
+          console.log('log in after register failed!!!')
+        }
+      } else {
+        console.log(registerResult);
+        for (const error of registerResult) {
+          this.registerErrorMessages?.push(error);
+        }
       }
     } else {
       this.registerForm.markAllAsTouched();
-      console.log("Register form is invalid!");
+      this.registerErrorMessages?.push('Please fill out the login form!');
     }
   }
+
+  
 }

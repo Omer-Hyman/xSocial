@@ -26,6 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
     path('api-user-login/', views.UserLogIn.as_view()),
+    path('api-user-registration/', views.UserRegistrationView.as_view()),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     # path('database/', include('database.urls')),
 ]

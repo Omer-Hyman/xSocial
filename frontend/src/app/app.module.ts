@@ -10,6 +10,8 @@ import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CreateSpotComponent } from './create-spot/create-spot.component';
 import { SpotViewComponent } from './spot-view/spot-view.component';
+import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
+import { TokenInterceptor } from "./token.interceptor";
 
 @NgModule({
   declarations: [
@@ -24,9 +26,14 @@ import { SpotViewComponent } from './spot-view/spot-view.component';
     BrowserModule,
     IonicModule.forRoot({}),
     AppRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HttpClientModule
+    // TODO: remove httpclientmodule
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

@@ -32,10 +32,9 @@ export class MapService {
   public async initialiseMap(mapOptions?: google.maps.MapOptions): Promise<void> {
     await this.loader.load();
     if (this.map) {
-      console.log('Map already exists. Just moving it.');
       this.moveMap(mapOptions);
     } else {
-      console.log('New map created.')
+      console.log('NEW MAP CREATED!!!!.')
       this.map = new google.maps.Map(document.getElementById("map") as HTMLElement, mapOptions ?? this.defaultMapOptions);
     }
   }

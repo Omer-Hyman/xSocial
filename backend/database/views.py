@@ -1,5 +1,5 @@
 # from django.shortcuts import render, redirect
-# from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 # from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from rest_framework import viewsets, permissions
@@ -8,6 +8,7 @@ from database.models import Spot
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from rest_framework import generics, status
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -16,6 +17,26 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+class UserRegistrationView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serialized = self.serializer_class(data=request.data, context={'request': request})
+        if serialized.is_valid():
+            User.objects.create_user(
+                username=serialized.validated_data['username'],
+                password=serialized.validated_data['password']
+            )
+            return Response(serialized.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
+        # serialized.is_valid(raise_exception=True)
+        # return Response(serialized.data, status=status.HTTP_201_CREATED)
+
+
 
 class UserLogIn(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
