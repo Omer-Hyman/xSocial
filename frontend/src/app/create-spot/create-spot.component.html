@@ -8,14 +8,18 @@
       <ion-input formControlName="spotDescription" placeholder="Spot description"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-select label="yoyo" formControlName="sportDropdown" placeholder="Suitable for:" [multiple]="true" >
+      <ion-select formControlName="sportDropdown" placeholder="Suitable for:" [multiple]="true" >
         <ion-select-option value="skateboard">Skateboarding</ion-select-option>
         <ion-select-option value="bmx">BMXing</ion-select-option>
         <ion-select-option value="scooter">Scooter riding</ion-select-option>
         <ion-select-option value="roller">Roller blading</ion-select-option>
       </ion-select>
     </ion-item>
+    <ion-item>
+      <input formControlName="image" type="file" accept="image/*" (change)="onImageChange($event)"/>
+    </ion-item>
   </ion-list>
+  <!-- TODO: Get rid of above ion-list? -->
   <!-- TODO: Change to do a static map (style tag) instead of changing map div - for increased performance -->
   <div id="mapContainer">
     <div id="map"></div>

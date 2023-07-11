@@ -19,6 +19,7 @@ export class CreateSpotComponent implements OnInit {
   public editSpotForm!: FormGroup;
   private spotCoords!: google.maps.LatLng;
   private mapOptions!: google.maps.MapOptions;
+  private spotImage?: File;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -29,7 +30,8 @@ export class CreateSpotComponent implements OnInit {
     this.editSpotForm = this.formBuilder.group({
       spotName: [''],
       spotDescription: [''],
-      sportDropdown: ['']
+      sportDropdown: [''],
+      image: []
     })
     this.spotCoords = new google.maps.LatLng(history.state.lat, history.state.lng);
     this.mapOptions = {
@@ -50,16 +52,34 @@ export class CreateSpotComponent implements OnInit {
   }
 
   public submitForm(): void {
-    const newSpot: Spot = {
-      name: this.editSpotForm.get('spotName')?.value,
-      description: this.editSpotForm.get('spotDescription')?.value,
-      latitude: this.spotCoords.lat(),
-      longitude: this.spotCoords.lng(),
-      suitableFor: this.editSpotForm.get('sportDropdown')?.value
-    };
-    this.router.navigate(['/map'], { state: { spot: newSpot }});
-    console.log('Spot created...');
-    this.apiService.postSpot(newSpot);
+      if (this.spotImage) {
+        const reader = new FileReader();
+        reader.readAsDataURL(this.spotImage);
+        reader.onload = () => {
+          const encodedImage = reader.result;
+          if (encodedImage) {
+            const newSpot: Spot = {
+              name: this.editSpotForm.get('spotName')?.value,
+              description: this.editSpotForm.get('spotDescription')?.value,
+              latitude: this.spotCoords.lat(),
+              longitude: this.spotCoords.lng(),
+              suitableFor: this.editSpotForm.get('sportDropdown')?.value,
+              image: encodedImage.toString()
+            };
+            this.apiService.postSpot(newSpot);
+            this.router.navigate(['/map'], { state: { spot: newSpot }});
+          }
+        }
+      }
+    // }
+
+
     // TODO: stay on same page or redirect based on api request response
+  }
+
+  public onImageChange(event: any): void {
+    this.spotImage = event.target.files[0];
+    console.log('image changed');
+    console.log(this.spotImage);
   }
 }

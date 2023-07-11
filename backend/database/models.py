@@ -47,6 +47,9 @@ class Spot(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField() # change to decimalfield if only want a certain number of decimal places
     suitableFor = MultiSelectField(choices=sportChoices, max_length=50)
+    image = models.ImageField(blank=True, null=True)
     
 
-
+# class SpotImage(models.Model):
+#     image = models.ImageField(blank=True, null=True, upload_to='images')
+    

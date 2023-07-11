@@ -15,12 +15,12 @@ export interface Spot {
     description?: string;
     latitude: number;
     longitude: number;
-    suitableFor: ('skateboard' | 'bmx' | 'scooter' | 'roller')[]
+    suitableFor: ('skateboard' | 'bmx' | 'scooter' | 'roller')[];
+    image?: string;
 }
 
 export interface LoggedInUser {
-    id: number,
-    token: string,
-    username: string
+    id: number;
+    token: string;
+    username: string;
   }
-

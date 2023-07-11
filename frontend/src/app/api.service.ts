@@ -34,14 +34,14 @@ export class ApiService {
   public async postSpot(spot: Spot): Promise<void> {
     try {
       console.log("Attempting to post: " + JSON.stringify(spot));
-      const results = await fetch('http://localhost:8000/spots/', {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Basic ' + btoa(this.username + ':' + this.password),
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(spot)
-      });
+        await fetch('http://localhost:8000/spots/', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Basic ' + btoa(this.username + ':' + this.password),
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(spot)
+        });
     } catch (error) {
       console.log('Create spot POST failed: ' + error);
     }

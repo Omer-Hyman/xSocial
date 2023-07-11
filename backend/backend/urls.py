@@ -14,9 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path, reverse_lazy
 from rest_framework import routers
 from database import views
+from django.views.generic.base import RedirectView
+from django.conf.urls.static import static
+from django.conf import settings
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -28,5 +31,7 @@ urlpatterns = [
     path('api-user-login/', views.UserLogIn.as_view()),
     path('api-user-registration/', views.UserRegistrationView.as_view()),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    re_path(r'^$', RedirectView.as_view(url=reverse_lazy('api-root'), permanent=False)),
+    ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     # path('database/', include('database.urls')),
-]
+
