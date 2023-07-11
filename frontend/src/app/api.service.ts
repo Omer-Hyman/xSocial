@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { LoggedInUser, Spot, User } from './interfaces';
-import { Observable } from 'rxjs';
+import { Spot, User } from './interfaces';
+import { LocalStorageService } from './local-storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +9,9 @@ export class ApiService {
   private readonly username = 'admin';
   private readonly password = 'REDACTED_SENSITIVE_INFO';
 
-  constructor() { }
+  constructor(
+    private storage: LocalStorageService
+  ) { }
 
   public async getSpots(): Promise<Spot[] | undefined> {
     try {
@@ -31,8 +33,7 @@ export class ApiService {
 
   public async postSpot(spot: Spot): Promise<void> {
     try {
-      console.log("Attempting to post: " + spot);
-      console.log(JSON.stringify(spot));
+      console.log("Attempting to post: " + JSON.stringify(spot));
       const results = await fetch('http://localhost:8000/spots/', {
         method: 'POST',
         headers: {
@@ -41,17 +42,15 @@ export class ApiService {
         },
         body: JSON.stringify(spot)
       });
-      console.log(results);
     } catch (error) {
       console.log('Create spot POST failed: ' + error);
     }
   }
 
-  public async createNewUser(user: User): Promise<number> {
+  public async createNewUser(user: User): Promise<string[]> {
     try {
-      console.log("Attempting to post: " + user);
-      console.log(JSON.stringify(user));
-      const results = await fetch('http://localhost:8000/users/', {
+      console.log("Attempting to post: " + JSON.stringify(user));
+      const results = await fetch('http://localhost:8000/api-user-registration/', {
         method: 'POST',
         headers: {
           'Authorization': 'Basic ' + btoa(this.username + ':' + this.password),
@@ -59,15 +58,30 @@ export class ApiService {
         },
         body: JSON.stringify(user)
       });
-      console.log(results);
-      return results.status;
+      if (results.status !== 201) {
+        const jsonResults = await results.json();
+        const errors = [];
+        if (jsonResults.username) {
+          for (const error of jsonResults.username) {
+            errors.push(error);
+          }
+        }
+        if (jsonResults.password) {
+          for (const error of jsonResults.password) {
+            errors.push(error);
+          }
+        }
+        return errors;
+      } else {
+        return ['ok']
+      }
     } catch (error) {
       console.log('Create user POST failed: ' + error);
-      return -1;
+      return ['failed'];
     }
   }
 
-  public async login(username: string, password: string): Promise<LoggedInUser | undefined> {
+  public async login(username: string, password: string): Promise<boolean> {
     try {
       const request = await fetch('http://127.0.0.1:8000/api-user-login/', {
         method: 'POST',
@@ -78,25 +92,26 @@ export class ApiService {
         body: JSON.stringify({ username, password })
       });
       const result = await request.json();
-      console.log(result);
-      return {
-        id: result.id,
-        token: result.token,
-        username: result.username
-      };
+      if (request.status === 200) {
+        this.storage.setLoggedInUser({
+          id: result.id,
+          token: result.token,
+          username: result.username
+        });
+        return true;
+      } else {
+        console.log(result);
+        return false;
+      }
     } catch (error) {
       console.log('Login user failed: ' + error);
-      return undefined;
+      return false;
     }
-    // return this.http.post(
-    //   'http://127.0.0.1:8000/api-user-login/', { username, password }
-    //   ) as Observable;
   }
 
   public async getUsers(): Promise<User[] | undefined> {
     try {
       console.log("Attempting to get users");
-      // console.log(JSON.stringify(user));
       const results = await fetch('http://localhost:8000/users/', {
         method: 'GET',
         headers: {
@@ -105,11 +120,29 @@ export class ApiService {
         }
       });
       const data = await results.json();
-      console.log(data.results);
       return data.results;
     } catch (error) {
       console.log('GET user failed: ' + error);
       return undefined;
     }
   }
+
+  public async getUsername(userID: string): Promise<string> {
+    try {
+      const results = await fetch(`http://localhost:8000/users/${userID}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Basic ' + btoa(this.username + ':' + this.password),
+          'Content-Type': 'application/json',
+        }
+      });
+      const data = await results.json();
+      return data.results;
+    } catch (error) {
+      console.log('GET user failed: ' + error);
+      return '';
+    }
+  }
 }
+
+// TODO: log out users at some point - displaying username in top nav bar
