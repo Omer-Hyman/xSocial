@@ -1,4 +1,4 @@
-<ion-menu contentId="main-content" id="burger-menu">
+<!-- <ion-menu contentId="main-content" id="burger-menu">
   <ion-header [translucent]="true">
     <ion-toolbar>
       <ion-title id="burgerMenuTitle">Navigate</ion-title>
@@ -23,14 +23,15 @@
       </ion-item>
     </ion-list>
   </ion-content>
-</ion-menu>
+</ion-menu> -->
 <div id="main-content">
   <ion-header>
     <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-menu-button></ion-menu-button>
-      </ion-buttons>
-      <ion-title>{{title}} {{username}}</ion-title>
+      <ion-buttons slot="end">
+        <!-- <ion-menu-button></ion-menu-button> -->
+        <ion-button (click)="logout()">Log Out</ion-button>
+    </ion-buttons>
+    <ion-title>{{title}} {{username}}</ion-title>
     </ion-toolbar>
   </ion-header>
 </div>

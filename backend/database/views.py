@@ -56,6 +56,15 @@ class SpotViewSet(viewsets.ModelViewSet):
     serializer_class = SpotSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def post(self, request, *args, **kwargs):
+        serialized = self.serializer_class(data=request.data, context={'request': request})
+        if serialized.is_valid():
+            foreignKeyID = request.data.get('createdBy')
+            user = User.objects.get(id=foreignKeyID)
+            myObject = Spot.objects.create(createdBy=user)
+            
+
+
 # class SpotImageViewSet(viewsets.ModelViewSet):
 #     """
 #     API endpoint that allows spots to be viewed or edited.

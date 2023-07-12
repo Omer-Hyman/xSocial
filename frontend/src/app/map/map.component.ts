@@ -44,7 +44,6 @@ export class MapComponent implements OnInit, OnDestroy {
     } else {
       console.log('no map exists for event listener!');
     }
-
   }
 
   public ngOnDestroy(): void {

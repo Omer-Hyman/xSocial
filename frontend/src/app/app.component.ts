@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { LocalStorageService } from './local-storage.service';
 
 @Component({
   selector: 'app-root',
@@ -6,7 +7,18 @@ import { Component } from '@angular/core';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
-  constructor() {}
+  
+  constructor(
+    // private storage: LocalStorageService
+  ) {}
+
+  // public ngOnInit(): void {
+  //   this.storage.clearStorage();
+  // }
+
+  // public ngOnDestroy(): void {
+  //   this.storage.clearStorage();
+  // }
 }
 
   // TODO: function keyword - still don't know

@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from '../api.service';
 import { LoggedInUser, User } from '../interfaces';
 import { LocalStorageService } from '../local-storage.service';
-
 
 @Component({
   selector: 'login-component',
@@ -39,9 +38,13 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  public ngOnInit(): void { }
+  public ngOnInit(): void {
+    this.storage.setLoggedInUser();
+  }
 
   // TODO: pass userID around in route params? and then get user data from that
+  // The token should be sent in http requests to the server to authenticate requests, so the server knows who's requesting the data  
+
   public async login(): Promise<void> {
     this.invalidLogin = false;
     if (this.loginForm.valid) {

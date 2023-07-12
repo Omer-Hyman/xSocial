@@ -15,8 +15,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = User
-        fields = ['username', 'password']
-
+        fields = ['id','username', 'password']
     
     # def create(self, validated_data):
     #     user = User.objects.create_user(
@@ -26,12 +25,13 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     #     return user
 
 class SpotSerializer(serializers.HyperlinkedModelSerializer):
+    createdBy = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), allow_null=True,)
     suitableFor = fields.MultipleChoiceField(choices=sportChoices)
     image=Base64ImageField()
 
     class Meta:
         model = Spot
-        fields = ['name', 'description', 'latitude', 'longitude', 'suitableFor', 'image']
+        fields = ['createdBy', 'name', 'description', 'latitude', 'longitude', 'suitableFor', 'image']
 
 # class SpotImageSerializer(serializers.HyperlinkedModelSerializer):
 #     image=Base64ImageField()

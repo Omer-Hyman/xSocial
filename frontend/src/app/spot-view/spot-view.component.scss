@@ -7,3 +7,14 @@
 //         width: 100%;
 //     }
 // }
+
+
+#suitableFor {
+    display: flex;
+    flex-wrap: wrap;
+    
+    ion-list {
+        padding: 0;
+        display: flex;
+    }
+}

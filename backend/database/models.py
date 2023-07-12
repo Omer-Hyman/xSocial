@@ -42,6 +42,7 @@ sportChoices = (
     )
 
 class Spot(models.Model):
+    createdBy = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=50, blank=True) # maybe TextField instead?
     latitude = models.FloatField()

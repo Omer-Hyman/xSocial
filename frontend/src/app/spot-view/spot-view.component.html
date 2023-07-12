@@ -5,16 +5,24 @@
 </ion-header>
 <ion-content>
   <ion-item>
-    <ion-label>Description: {{spot.description}}</ion-label>
+    <ion-label>Created By: {{spotUsername}}</ion-label>
   </ion-item>
   <ion-item>
-    <ion-label>Suitable for:</ion-label>
+    <ion-label>Description: {{spot.description}}</ion-label>
   </ion-item>
-  <ion-list>
-    <ion-item class="sports" *ngFor="let sport of spot.suitableFor">
-      <ion-label>{{sport}}</ion-label>
+  <div id="suitableFor">
+    <ion-item>
+      <ion-label>Suitable for:</ion-label>
     </ion-item>
-  </ion-list>
+    <ion-list>
+      <ion-item class="sports" *ngFor="let sport of spot.suitableFor">
+        <ion-label>{{sport}}</ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+  <ion-item *ngIf="spot.image">
+    <img src={{spot.image}}>
+  </ion-item>
   <!-- <ion-accordion-group>
     <ion-accordion>
       <ion-item slot="header">

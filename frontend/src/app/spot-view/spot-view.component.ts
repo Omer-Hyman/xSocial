@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Spot } from '../interfaces';
+import { LocalStorageService } from '../local-storage.service';
 
 @Component({
   selector: 'app-spot-view',
@@ -11,12 +12,13 @@ import { Spot } from '../interfaces';
 })
 export class SpotViewComponent implements OnInit {
   @Input() spot!: Spot;
+  public spotUsername?: string;
 
   constructor(
+    private storage: LocalStorageService
     ) { }
 
   public ngOnInit(): void {
-    console.log(this.spot);
+    this.spotUsername = this.storage.getCurrentUser()?.username;
   }
-
 }

@@ -5,6 +5,7 @@ import { MapService } from '../map.service';
 import { Router } from '@angular/router';
 import { Spot } from '../interfaces';
 import { ApiService } from '../api.service';
+import { LocalStorageService } from '../local-storage.service';
 
 @Component({
   selector: 'app-create-spot',
@@ -25,7 +26,8 @@ export class CreateSpotComponent implements OnInit {
     private formBuilder: FormBuilder,
     private mapService: MapService,
     private router: Router,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private storage: LocalStorageService
   ) {
     this.editSpotForm = this.formBuilder.group({
       spotName: [''],
@@ -52,28 +54,27 @@ export class CreateSpotComponent implements OnInit {
   }
 
   public submitForm(): void {
-      if (this.spotImage) {
-        const reader = new FileReader();
-        reader.readAsDataURL(this.spotImage);
-        reader.onload = () => {
-          const encodedImage = reader.result;
-          if (encodedImage) {
-            const newSpot: Spot = {
-              name: this.editSpotForm.get('spotName')?.value,
-              description: this.editSpotForm.get('spotDescription')?.value,
-              latitude: this.spotCoords.lat(),
-              longitude: this.spotCoords.lng(),
-              suitableFor: this.editSpotForm.get('sportDropdown')?.value,
-              image: encodedImage.toString()
-            };
-            this.apiService.postSpot(newSpot);
-            this.router.navigate(['/map'], { state: { spot: newSpot }});
+        const newSpot: Spot = {
+          createdBy: this.storage.getCurrentUser()?.id,
+          name: this.editSpotForm.get('spotName')?.value,
+          description: this.editSpotForm.get('spotDescription')?.value,
+          latitude: this.spotCoords.lat(),
+          longitude: this.spotCoords.lng(),
+          suitableFor: this.editSpotForm.get('sportDropdown')?.value,
+          image: ''
+        };
+        if (this.spotImage) {
+          const reader = new FileReader();
+          reader.readAsDataURL(this.spotImage);
+          reader.onload = () => {
+            const encodedImage = reader.result;
+            if (encodedImage) {
+              newSpot.image = encodedImage.toString();
+            }
           }
         }
-      }
-    // }
-
-
+        this.apiService.postSpot(newSpot);
+        this.router.navigate(['/map'], { state: { spot: newSpot }});
     // TODO: stay on same page or redirect based on api request response
   }
 

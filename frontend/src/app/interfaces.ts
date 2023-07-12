@@ -11,12 +11,14 @@ export interface User {
 }
 
 export interface Spot {
+    /** Username */
+    createdBy?: number; 
     name: string;
     description?: string;
     latitude: number;
     longitude: number;
     suitableFor: ('skateboard' | 'bmx' | 'scooter' | 'roller')[];
-    image?: string;
+    image: string;
 }
 
 export interface LoggedInUser {
