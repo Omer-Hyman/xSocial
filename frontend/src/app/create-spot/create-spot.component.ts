@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import mapStyleOptions from '../../mapStyleOptions.json'
 import { MapService } from '../map.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Spot } from '../interfaces';
 import { ApiService } from '../api.service';
 import { LocalStorageService } from '../local-storage.service';
@@ -27,7 +27,8 @@ export class CreateSpotComponent implements OnInit {
     private mapService: MapService,
     private router: Router,
     private apiService: ApiService,
-    private storage: LocalStorageService
+    private storage: LocalStorageService,
+    private activatedRoute: ActivatedRoute
   ) {
     this.editSpotForm = this.formBuilder.group({
       spotName: [''],
@@ -55,7 +56,7 @@ export class CreateSpotComponent implements OnInit {
 
   public submitForm(): void {
         const newSpot: Spot = {
-          createdBy: this.storage.getCurrentUser()?.id,
+          createdBy: this.storage.getCurrentUserFromLocalStorage()?.id,
           name: this.editSpotForm.get('spotName')?.value,
           description: this.editSpotForm.get('spotDescription')?.value,
           latitude: this.spotCoords.lat(),
@@ -74,7 +75,7 @@ export class CreateSpotComponent implements OnInit {
           }
         }
         this.apiService.postSpot(newSpot);
-        this.router.navigate(['/map'], { state: { spot: newSpot }});
+        this.router.navigate(['/map', this.activatedRoute.snapshot.paramMap.get('id')]);
     // TODO: stay on same page or redirect based on api request response
   }
 

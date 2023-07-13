@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Spot } from '../interfaces';
-import { LocalStorageService } from '../local-storage.service';
+import { ApiService } from '../api.service';
 
 @Component({
   selector: 'app-spot-view',
@@ -15,10 +15,14 @@ export class SpotViewComponent implements OnInit {
   public spotUsername?: string;
 
   constructor(
-    private storage: LocalStorageService
+    private api: ApiService
     ) { }
 
-  public ngOnInit(): void {
-    this.spotUsername = this.storage.getCurrentUser()?.username;
+  public async ngOnInit(): Promise<void> {
+    const users = await this.api.getUsers();
+    if (users) {
+      this.spotUsername = users.find(user => user.id === this.spot.createdBy)?.username;
+      // TODO: Change a spot to save the user's name not the id!!!
+    }
   }
 }

@@ -1,8 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from '../api.service';
-import { LoggedInUser, User } from '../interfaces';
+import { User } from '../interfaces';
 import { LocalStorageService } from '../local-storage.service';
 
 @Component({
@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
     this.invalidLogin = false;
     if (this.loginForm.valid) {
       const result = await this.apiService.login(this.loginForm.get('username')?.value, this.loginForm.get('password')?.value);
-      result ? this.router.navigate(['/map']) : this.invalidLogin = true;
+      result ? this.router.navigate(['/map', this.storage.getCurrentUserFromLocalStorage()?.id]) : this.invalidLogin = true;
     } else {
       this.invalidLogin = true;
       this.loginForm.markAllAsTouched();
@@ -64,7 +64,6 @@ export class LoginComponent implements OnInit {
     console.log(this.registerForm.value);
     if (this.registerForm.valid) {
       const newUser: User = {
-        // displayName: this.registerForm.get('displayName')?.value,
         username: this.registerForm.get('username')?.value,
         password: this.registerForm.get('password')?.value
       }
@@ -72,7 +71,7 @@ export class LoginComponent implements OnInit {
       if (registerResult[0] === 'ok') {
         const loginResult = await this.apiService.login(this.loginForm.get('username')?.value, this.loginForm.get('password')?.value);
         if (loginResult) {
-          this.router.navigate(['/map']);
+          this.router.navigate(['/map', this.storage.getCurrentUserFromLocalStorage()?.id]);
         } else {
           console.log('log in after register failed!!!')
         }

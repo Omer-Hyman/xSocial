@@ -1,13 +1,12 @@
 export interface User {
+    id?: number;
     username: string;
-    displayName?: string;
     password: string;
+    displayName?: string;
     firstName?: string;
     lastName?: string;
     gender?: 'male' | 'female';
     sports?: [string];
-    // password?
-    // change sport type?
 }
 
 export interface Spot {

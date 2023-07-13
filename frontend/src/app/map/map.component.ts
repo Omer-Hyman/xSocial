@@ -1,10 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MapService } from '../map.service';
 import { ModalController } from '@ionic/angular';
 import { SpotViewComponent } from '../spot-view/spot-view.component';
 import { Spot } from '../interfaces';
 import { Subscription } from 'rxjs';
+import { LocalStorageService } from '../local-storage.service';
 
 @Component({
   selector: 'map-component',
@@ -21,7 +22,8 @@ export class MapComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private mapService: MapService,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private activatedRoute: ActivatedRoute
   ) {
     this.subscription = this.mapService.getMarkerObservable().subscribe((spot) => {
       this.markerClicked(spot);
@@ -39,7 +41,7 @@ export class MapComponent implements OnInit, OnDestroy {
     const map = this.mapService.getMap();
     if (map) {
       google.maps.event.addListener(map, 'click', ((event) => {
-        this.router.navigate(['/create-spot'], { state: { lat: event.latLng.lat(), lng: event.latLng.lng() } });
+        this.router.navigate(['/create-spot', this.activatedRoute.snapshot.paramMap.get('id')], { state: { lat: event.latLng.lat(), lng: event.latLng.lng() } });
       }))
     } else {
       console.log('no map exists for event listener!');

@@ -12,9 +12,14 @@
 #suitableFor {
     display: flex;
     flex-wrap: wrap;
+
+    ion-item {
+        flex-grow: 1;
+    }
     
     ion-list {
         padding: 0;
         display: flex;
+        flex-grow: 1;
     }
 }

@@ -5,10 +5,11 @@ import { LoginComponent } from './login/login.component';
 import { MapComponent } from './map/map.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  // { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent, title: 'Login or register' },
-  { path: 'map', component: MapComponent, title: 'Map'},
-  { path: 'create-spot', component: CreateSpotComponent, title: 'Create spot' }
+  { path: 'map/:id', component: MapComponent, title: 'Map'},
+  { path: 'create-spot/:id', component: CreateSpotComponent, title: 'Create spot' },
+  { path: '**', component: LoginComponent, title: 'Login or register' }
 ];
 @NgModule({
   imports: [

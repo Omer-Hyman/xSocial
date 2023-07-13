@@ -61,8 +61,8 @@ class SpotViewSet(viewsets.ModelViewSet):
         if serialized.is_valid():
             foreignKeyID = request.data.get('createdBy')
             user = User.objects.get(id=foreignKeyID)
-            myObject = Spot.objects.create(createdBy=user)
-            
+            Spot.objects.create(createdBy=user)
+
 
 
 # class SpotImageViewSet(viewsets.ModelViewSet):
