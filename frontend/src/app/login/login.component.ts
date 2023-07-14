@@ -16,7 +16,6 @@ import { LocalStorageService } from '../local-storage.service';
 
 export class LoginComponent implements OnInit {
   public loginForm: FormGroup;
-  public registerForm: FormGroup;
   public registerMode = false;
   public invalidLogin = false;
   public registerErrorMessages?: string[];
@@ -31,25 +30,19 @@ export class LoginComponent implements OnInit {
       username: ['', Validators.required],
       password: ['', Validators.required]
     });
-    this.registerForm = this.formBuilder.group({
-      displayName: [''],
-      username: ['', Validators.required],
-      password: ['', Validators.required]
-    });
   }
 
   public ngOnInit(): void {
     this.storage.setLoggedInUser();
   }
 
-  // TODO: pass userID around in route params? and then get user data from that
   // The token should be sent in http requests to the server to authenticate requests, so the server knows who's requesting the data  
 
   public async login(): Promise<void> {
     this.invalidLogin = false;
     if (this.loginForm.valid) {
       const result = await this.apiService.login(this.loginForm.get('username')?.value, this.loginForm.get('password')?.value);
-      result ? this.router.navigate(['/map', this.storage.getCurrentUserFromLocalStorage()?.id]) : this.invalidLogin = true;
+      result ? this.router.navigate(['/map', this.storage.getCurrentUser()?.id]) : this.invalidLogin = true;
     } else {
       this.invalidLogin = true;
       this.loginForm.markAllAsTouched();
@@ -61,17 +54,17 @@ export class LoginComponent implements OnInit {
   public async register(): Promise<void> {
     this.registerErrorMessages = [];
     console.log("Registering new user with details: ");
-    console.log(this.registerForm.value);
-    if (this.registerForm.valid) {
+    console.log(this.loginForm.value);
+    if (this.loginForm.valid) {
       const newUser: User = {
-        username: this.registerForm.get('username')?.value,
-        password: this.registerForm.get('password')?.value
+        username: this.loginForm.get('username')?.value,
+        password: this.loginForm.get('password')?.value
       }
       const registerResult = await this.apiService.createNewUser(newUser);
       if (registerResult[0] === 'ok') {
         const loginResult = await this.apiService.login(this.loginForm.get('username')?.value, this.loginForm.get('password')?.value);
         if (loginResult) {
-          this.router.navigate(['/map', this.storage.getCurrentUserFromLocalStorage()?.id]);
+          this.router.navigate(['/map', this.storage.getCurrentUser()?.id]);
         } else {
           console.log('log in after register failed!!!')
         }
@@ -82,7 +75,7 @@ export class LoginComponent implements OnInit {
         }
       }
     } else {
-      this.registerForm.markAllAsTouched();
+      this.loginForm.markAllAsTouched();
       this.registerErrorMessages?.push('Please fill out the login form!');
     }
   }

@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Spot } from '../interfaces';
 import { ApiService } from '../api.service';
 import { LocalStorageService } from '../local-storage.service';
+// import { } from 'googlemaps';
 
 @Component({
   selector: 'app-create-spot',
@@ -56,7 +57,7 @@ export class CreateSpotComponent implements OnInit {
 
   public submitForm(): void {
         const newSpot: Spot = {
-          createdBy: this.storage.getCurrentUserFromLocalStorage()?.id,
+          createdBy: this.storage.getCurrentUser()?.id,
           name: this.editSpotForm.get('spotName')?.value,
           description: this.editSpotForm.get('spotDescription')?.value,
           latitude: this.spotCoords.lat(),

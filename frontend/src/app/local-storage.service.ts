@@ -21,7 +21,7 @@ export class LocalStorageService {
     console.log('user data in local storage: ' + localStorage.getItem('userData'));
   }
 
-  public getCurrentUserFromLocalStorage(): LoggedInUser | undefined {
+  public getCurrentUser(): LoggedInUser | undefined {
     const data = localStorage.getItem('userData');
     if (data) {
       const dataJSON = JSON.parse(data);

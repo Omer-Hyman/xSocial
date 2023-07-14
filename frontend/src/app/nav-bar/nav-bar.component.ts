@@ -18,7 +18,7 @@ export class NavBarComponent implements OnInit {
   ) {}
 
   public ngOnInit(): void {
-    this.username = this.storage.getCurrentUserFromLocalStorage()?.username ?? '';
+    this.username = this.storage.getCurrentUser()?.username ?? '';
   }
 
   public logout(): void {

@@ -5,7 +5,6 @@ import { ModalController } from '@ionic/angular';
 import { SpotViewComponent } from '../spot-view/spot-view.component';
 import { Spot } from '../interfaces';
 import { Subscription } from 'rxjs';
-import { LocalStorageService } from '../local-storage.service';
 
 @Component({
   selector: 'map-component',

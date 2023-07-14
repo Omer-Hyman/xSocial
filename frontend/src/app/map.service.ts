@@ -4,6 +4,7 @@ import mapStyleOptions from '../mapStyleOptions.json'
 import { ApiService } from './api.service';
 import { Subject } from 'rxjs';
 import { Spot } from './interfaces';
+import { } from 'googlemaps';
 
 @Injectable({
   providedIn: 'root'

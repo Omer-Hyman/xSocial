@@ -1,13 +1,12 @@
 <ion-content>
   <app-nav-bar title="Login or Register"></app-nav-bar>
-
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="medium">Login or Register</ion-title>
     </ion-toolbar>
   </ion-header>
   <ion-button (click)="registerMode =! registerMode">Switch to {{registerMode ? 'Login' : 'Register' }}</ion-button>
-  <form [formGroup]="loginForm" (ngSubmit)="login()" *ngIf="!registerMode">
+  <form [formGroup]="loginForm" (ngSubmit)="registerMode ? register() : login()" *ngIf="!registerMode">
     <ion-item>
       <ion-input formControlName="username" placeholder="Username"></ion-input>
     </ion-item>
@@ -15,26 +14,11 @@
       <ion-input formControlName="password" placeholder="Password" type="password"></ion-input>
     </ion-item>
     <h3 *ngIf="invalidLogin">Username and password combination is incorrect!</h3>
-    <div class="loginButtons">
-      <ion-button type="submit">Login</ion-button>
-      <ion-button [routerLink]="['/map']">Continue as guest</ion-button>
-    </div>
-  </form>
-  <form [formGroup]="registerForm" (ngSubmit)="register()" *ngIf="registerMode">
-    <ion-item>
-      <ion-input formControlName="displayName" placeholder="Display Name"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-input formControlName="username" placeholder="Username"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-input formControlName="password" placeholder="Password" type="password"></ion-input>
-    </ion-item>
     <ul>
-      <li *ngFor="let error of registerErrorMessages"> {{error}}</li>
+      <li *ngFor="let error of registerErrorMessages">{{error}}</li>
     </ul>
-    <div class="registerButtons">
-      <ion-button type="submit">Register</ion-button>
+    <div class="loginButtons">
+      <ion-button type="submit" [disabled]="!loginForm.valid">{{registerMode ? 'Register' : 'Login'}}</ion-button>
       <ion-button [routerLink]="['/map']">Continue as guest</ion-button>
     </div>
   </form>
