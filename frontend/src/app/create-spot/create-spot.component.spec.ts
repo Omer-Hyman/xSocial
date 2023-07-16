@@ -1,14 +1,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 import { CreateSpotComponent } from './create-spot.component';
-import { ActivatedRoute } from '@angular/router';
-// import { } from 'googlemaps';
-
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
 
 describe('CreateSpotComponent', () => {
   let component: CreateSpotComponent;
   let fixture: ComponentFixture<CreateSpotComponent>;
-  let mockActivatedRouteService;
+  let mockActivatedRouteService: ActivatedRoute;
   
   beforeEach(waitForAsync(() => {
     window.history.pushState({ lat: 123, lng: 456}, '');
@@ -19,8 +17,16 @@ describe('CreateSpotComponent', () => {
       declarations: [ CreateSpotComponent ],
       imports: [IonicModule.forRoot()],
       providers: [
-        { provide: ActivatedRoute, useValue: mockActivatedRouteService }
-      ]
+        { provide: ActivatedRoute, 
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: () => 1 
+              },
+            },
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CreateSpotComponent);

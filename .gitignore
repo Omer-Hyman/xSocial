@@ -9,6 +9,8 @@ dist/
 .angular/
 .vscode/
 .DS_Store
+android/
+www/
 
 # Logs and build files
 logs/

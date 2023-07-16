@@ -2,17 +2,17 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { LoginComponent } from './login.component';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DebugElement } from '@angular/core';
-import { By } from '@angular/platform-browser';
+import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LocalStorageService } from '../local-storage.service';
+import { ApiService } from '../api.service';
+import { Router } from '@angular/router';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
 
-  let mockLocalStorageService: jasmine.SpyObj<LocalStorageService>;
-  let service: LocalStorageService;
+  let apiService: ApiService;
+  let router: Router;
 
   beforeEach(waitForAsync(() => {
     // const mockLocalStorageService = jasmine.createSpyObj(['setLoggedInUser', 'getCurrentUser']);
@@ -29,7 +29,8 @@ describe('LoginComponent', () => {
       ]
     }).compileComponents();
     
-    service = TestBed.inject(LocalStorageService);
+    apiService = TestBed.inject(ApiService);
+    router = TestBed.inject(Router);
 
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
@@ -48,15 +49,86 @@ describe('LoginComponent', () => {
     expect(component).toBeTruthy();
   });
   
-  describe('ngOnInit', () => {
-    it('should reset logged in user', () => {
-      // spyOn(mockLocalStorageService, 'setLoggedInUser').and.returnValue();
-      // fixture.detectChanges();
-      // mockLocalStorageService.setLoggedInUser.and.resolveTo();
-      
-      // component.ngOnInit();
+  describe('login', () => {
+    it('login form is valid and login details are valid', async () => {
+      spyOnProperty(component.loginForm, 'valid').and.returnValue(true);
+      const apiServiceSpy = spyOn(apiService, 'login').and.callThrough();
+      const routerSpy = spyOn(router, 'navigate');
+      apiServiceSpy.and.resolveTo(true);
 
-      // expect(mockLocalStorageService.setLoggedInUser()).toHaveBeenCalled();
+      await component.login();
+
+      expect(component.invalidLogin).toBeFalse();
+      expect(apiServiceSpy).toHaveBeenCalled();
+      expect(routerSpy).toHaveBeenCalled();
+    });
+
+    it('login form is valid and login details are invalid', async () => {
+      spyOnProperty(component.loginForm, 'valid').and.returnValue(true);
+      const apiServiceSpy = spyOn(apiService, 'login').and.callThrough();
+      apiServiceSpy.and.resolveTo(false);
+
+      await component.login();
+
+      expect(component.invalidLogin).toBeTrue();
+      expect(apiServiceSpy).toHaveBeenCalled();
+    });
+
+    it('login form is invalid', async () => {
+      spyOnProperty(component.loginForm, 'valid').and.returnValue(false);
+      const spy = spyOn(component.loginForm, 'markAllAsTouched');
+
+      await component.login();
+
+      expect(component.invalidLogin).toBeTrue();
+      expect(spy).toHaveBeenCalled();
+    });
+  });
+
+  describe('register', () => {
+    it('new user created and logged in', async () => {
+      component.loginForm.setValue({
+        username: 'newUsername',
+        password: 'patchingThisForm123'
+      });
+      const createNewUserSpy = spyOn(apiService, 'createNewUser').and.callThrough();
+      const loginSpy = spyOn(apiService, 'login').and.callThrough();
+      createNewUserSpy.and.resolveTo(['ok']);
+      loginSpy.and.resolveTo(true);
+      const routerSpy = spyOn(router, 'navigate');
+
+      await component.register();
+
+      expect(createNewUserSpy).toHaveBeenCalled();
+      expect(loginSpy).toHaveBeenCalled();
+      expect(routerSpy).toHaveBeenCalled();
+    });
+
+    it('new user created but failed to logged in', async () => {
+      component.loginForm.setValue({
+        username: 'newUsername',
+        password: 'patchingThisForm123'
+      });
+      const createNewUserSpy = spyOn(apiService, 'createNewUser').and.callThrough();
+      const loginSpy = spyOn(apiService, 'login').and.callThrough();
+      createNewUserSpy.and.resolveTo(['ok']);
+      loginSpy.and.resolveTo(false);
+      const routerSpy = spyOn(router, 'navigate');
+
+      await component.register();
+
+      expect(createNewUserSpy).toHaveBeenCalled();
+      expect(loginSpy).toHaveBeenCalled();
+      expect(routerSpy).not.toHaveBeenCalled();
+    });
+
+    it('login form invalid', async () => {
+      spyOnProperty(component.loginForm, 'valid').and.returnValue(false);
+      const spy = spyOn(component.loginForm, 'markAllAsTouched');
+
+      await component.register();
+
+      expect(spy).toHaveBeenCalled();
     });
   });
 });

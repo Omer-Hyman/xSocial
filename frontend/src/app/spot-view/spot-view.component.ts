@@ -19,6 +19,7 @@ export class SpotViewComponent implements OnInit {
     ) { }
 
   public async ngOnInit(): Promise<void> {
+    console.log(this.spot.image);
     const users = await this.api.getUsers();
     if (users) {
       this.spotUsername = users.find(user => user.id === this.spot.createdBy)?.username;

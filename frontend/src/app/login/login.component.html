@@ -6,7 +6,7 @@
     </ion-toolbar>
   </ion-header>
   <ion-button (click)="registerMode =! registerMode">Switch to {{registerMode ? 'Login' : 'Register' }}</ion-button>
-  <form [formGroup]="loginForm" (ngSubmit)="registerMode ? register() : login()" *ngIf="!registerMode">
+  <form [formGroup]="loginForm" (ngSubmit)="registerMode ? register() : login()">
     <ion-item>
       <ion-input formControlName="username" placeholder="Username"></ion-input>
     </ion-item>

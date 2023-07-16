@@ -36,7 +36,8 @@ export class LoginComponent implements OnInit {
     this.storage.setLoggedInUser();
   }
 
-  // The token should be sent in http requests to the server to authenticate requests, so the server knows who's requesting the data  
+  // The token should be sent in http requests to the server to authenticate requests, so the server knows who's requesting the data 
+  // TODO: Fix error messages on register form???
 
   public async login(): Promise<void> {
     this.invalidLogin = false;
@@ -66,7 +67,7 @@ export class LoginComponent implements OnInit {
         if (loginResult) {
           this.router.navigate(['/map', this.storage.getCurrentUser()?.id]);
         } else {
-          console.log('log in after register failed!!!')
+          console.log('log in after register failed!!!');
         }
       } else {
         console.log(registerResult);
@@ -79,6 +80,6 @@ export class LoginComponent implements OnInit {
       this.registerErrorMessages?.push('Please fill out the login form!');
     }
   }
-
-  
 }
+
+// TODO: sort out guest!!!

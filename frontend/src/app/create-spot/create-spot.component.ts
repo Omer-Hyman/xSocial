@@ -6,7 +6,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Spot } from '../interfaces';
 import { ApiService } from '../api.service';
 import { LocalStorageService } from '../local-storage.service';
-// import { } from 'googlemaps';
 
 @Component({
   selector: 'app-create-spot',
@@ -22,6 +21,7 @@ export class CreateSpotComponent implements OnInit {
   private spotCoords!: google.maps.LatLng;
   private mapOptions!: google.maps.MapOptions;
   private spotImage?: File;
+  public userID: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -44,6 +44,7 @@ export class CreateSpotComponent implements OnInit {
       disableDefaultUI: true,
       styles: mapStyleOptions as google.maps.MapTypeStyle[]
     };
+    this.userID = this.activatedRoute.snapshot.paramMap.get('id') ?? '';
   }
 
   // TODO: Change styling of this map? - Need to get rid of the small information bar at the bottom of the map
@@ -55,7 +56,7 @@ export class CreateSpotComponent implements OnInit {
     this.mapService.setMarker(this.spotCoords);
   }
 
-  public submitForm(): void {
+  public async submitForm(): Promise<void> {
         const newSpot: Spot = {
           createdBy: this.storage.getCurrentUser()?.id,
           name: this.editSpotForm.get('spotName')?.value,
@@ -65,24 +66,37 @@ export class CreateSpotComponent implements OnInit {
           suitableFor: this.editSpotForm.get('sportDropdown')?.value,
           image: ''
         };
-        if (this.spotImage) {
-          const reader = new FileReader();
-          reader.readAsDataURL(this.spotImage);
-          reader.onload = () => {
-            const encodedImage = reader.result;
-            if (encodedImage) {
-              newSpot.image = encodedImage.toString();
-            }
-          }
+        if (this.spotImage) {      
+          const encodedImage = await this.convertToBase64(this.spotImage);
+          if (encodedImage) {
+            newSpot.image = encodedImage.toString();
+          }          
+        } else {
+          console.log('No image!');
         }
+        console.log(newSpot.image);
         this.apiService.postSpot(newSpot);
         this.router.navigate(['/map', this.activatedRoute.snapshot.paramMap.get('id')]);
     // TODO: stay on same page or redirect based on api request response
   }
 
+  private convertToBase64(image: File): Promise<any> {
+      const reader = new FileReader();
+      reader.readAsDataURL(image);
+
+      return new Promise((resolve, reject) => {
+        reader.onload = function(event) {
+          resolve(event.target?.result);
+        };
+      })
+  }
+
   public onImageChange(event: any): void {
     this.spotImage = event.target.files[0];
-    console.log('image changed');
-    console.log(this.spotImage);
+    if (this.spotImage) {
+      this.convertToBase64(this.spotImage);
+      console.log('image changed');
+      console.log(this.spotImage);
+    }    
   }
 }

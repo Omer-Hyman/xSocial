@@ -78,9 +78,6 @@
             },
             "development": {
               "browserTarget": "app:build:development"
-            },
-            "ci": {
-              "progress": false
             }
           },
           "defaultConfiguration": "development"
@@ -112,7 +109,8 @@
               }
             ],
             "styles": ["src/theme/variables.scss", "src/global.scss"],
-            "scripts": []
+            "scripts": [],
+            "codeCoverage": true
           },
           "configurations": {
             "ci": {

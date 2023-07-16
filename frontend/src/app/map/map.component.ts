@@ -41,7 +41,7 @@ export class MapComponent implements OnInit, OnDestroy {
     if (map) {
       google.maps.event.addListener(map, 'click', ((event) => {
         this.router.navigate(['/create-spot', this.activatedRoute.snapshot.paramMap.get('id')], { state: { lat: event.latLng.lat(), lng: event.latLng.lng() } });
-      }))
+      }));
     } else {
       console.log('no map exists for event listener!');
     }
@@ -58,6 +58,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   private async markerClicked(spot: Spot): Promise<void> {
     console.log('marker clicked');
+    console.log(spot);
     const modal = await this.modalController.create({
       component: SpotViewComponent,
       breakpoints: [0, 0.3, 0.5, 0.8], // where it snaps to if you drag it down
