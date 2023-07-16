@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { CreateSpotComponent } from './create-spot/create-spot.component';
-import { LoginComponent } from './login/login.component';
-import { MapComponent } from './map/map.component';
+import { LoginComponent } from './components/login/login.component';
+import { MapComponent } from './components/map/map.component';
+import { CreateSpotComponent } from './components/create-spot/create-spot.component';
 
 const routes: Routes = [
   // { path: '', redirectTo: '/login', pathMatch: 'full' },

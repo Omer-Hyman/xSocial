@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Spot, User } from './interfaces';
 import { LocalStorageService } from './local-storage.service';
+import { Spot, User } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'

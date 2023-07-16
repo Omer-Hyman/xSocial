@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Loader } from 'google-maps';
-import mapStyleOptions from '../mapStyleOptions.json'
 import { ApiService } from './api.service';
 import { Subject } from 'rxjs';
-import { Spot } from './interfaces';
 import { } from 'googlemaps';
+import { Spot } from '../interfaces';
+import mapStyleOptions from 'src/mapStyleOptions.json'
 
 @Injectable({
   providedIn: 'root'

@@ -3,7 +3,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { SpotViewComponent } from './spot-view.component';
 import { ApiService } from '../api.service';
-import { Spot } from '../interfaces';
+import { Spot } from '../../interfaces';
 
 describe('SpotViewComponent', () => {
   let component: SpotViewComponent;

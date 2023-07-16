@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MapService } from '../map.service';
 import { ModalController } from '@ionic/angular';
 import { SpotViewComponent } from '../spot-view/spot-view.component';
-import { Spot } from '../interfaces';
 import { Subscription } from 'rxjs';
+import { Spot } from 'src/app/interfaces';
+import { MapService } from 'src/app/services/map.service';
 
 @Component({
   selector: 'map-component',

@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import mapStyleOptions from '../../mapStyleOptions.json'
-import { MapService } from '../map.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Spot } from '../interfaces';
-import { ApiService } from '../api.service';
-import { LocalStorageService } from '../local-storage.service';
+import { Spot } from 'src/app/interfaces';
+import { ApiService } from 'src/app/services/api.service';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { MapService } from 'src/app/services/map.service';
+import mapStyleOptions from 'src/mapStyleOptions.json'
 
 @Component({
   selector: 'app-create-spot',

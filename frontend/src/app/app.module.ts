@@ -4,14 +4,13 @@ import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './login/login.component';
-import { MapComponent } from './map/map.component';
-import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { CreateSpotComponent } from './create-spot/create-spot.component';
-import { SpotViewComponent } from './spot-view/spot-view.component';
-import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
-import { TokenInterceptor } from "./token.interceptor";
+import { SpotViewComponent } from './components/spot-view/spot-view.component';
+import { HttpClientModule } from "@angular/common/http";
+import { CreateSpotComponent } from './components/create-spot/create-spot.component';
+import { LoginComponent } from './components/login/login.component';
+import { MapComponent } from './components/map/map.component';
+import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 
 @NgModule({
   declarations: [
@@ -26,13 +25,10 @@ import { TokenInterceptor } from "./token.interceptor";
     BrowserModule,
     IonicModule.forRoot({}),
     AppRoutingModule,
-    ReactiveFormsModule,
-    HttpClientModule
-    // TODO: remove httpclientmodule
+    ReactiveFormsModule
   ],
   providers: [
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent],
 })

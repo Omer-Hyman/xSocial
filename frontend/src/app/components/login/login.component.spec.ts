@@ -3,9 +3,9 @@ import { IonicModule } from '@ionic/angular';
 
 import { LoginComponent } from './login.component';
 import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LocalStorageService } from '../local-storage.service';
-import { ApiService } from '../api.service';
 import { Router } from '@angular/router';
+import { ApiService } from 'src/app/services/api.service';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
