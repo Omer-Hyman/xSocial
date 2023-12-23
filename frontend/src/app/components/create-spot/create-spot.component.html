@@ -1,4 +1,12 @@
 <app-nav-bar title="Create spot"></app-nav-bar>
+<!-- <form action="http://127.0.0.1:8000/api-user-login/" method="post">
+  <label for="username">Username:</label>
+  <input type="text" id="username" name="username">
+  <label for="password">Password:</label>
+  <input type="text" id="password" name="password">
+  <input type="submit" value="Submit">
+</form> -->
+
 <form [formGroup]="editSpotForm" (ngSubmit)="submitForm()">
   <ion-list>
     <ion-item>

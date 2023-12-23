@@ -12,6 +12,10 @@ import mapStyleOptions from 'src/mapStyleOptions.json'
 export class MapService {
 
   private loader = new Loader('REDACTED_SENSITIVE_INFO');
+
+
+
+  
   private map?: google.maps.Map;
   private markers: google.maps.Marker[] = [];
   private defaultMapOptions: google.maps.MapOptions = {

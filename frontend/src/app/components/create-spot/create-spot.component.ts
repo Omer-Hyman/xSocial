@@ -57,42 +57,45 @@ export class CreateSpotComponent implements OnInit {
   }
 
   public async submitForm(): Promise<void> {
-        const newSpot: Spot = {
-          createdBy: this.storage.getCurrentUser()?.id,
-          name: this.editSpotForm.get('spotName')?.value,
-          description: this.editSpotForm.get('spotDescription')?.value,
-          latitude: this.spotCoords.lat(),
-          longitude: this.spotCoords.lng(),
-          suitableFor: this.editSpotForm.get('sportDropdown')?.value,
-          image: ''
-        };
-        if (this.spotImage) {      
-          const encodedImage = await this.convertToBase64(this.spotImage);
-          if (encodedImage) {
-            newSpot.image = encodedImage.toString();
-          }          
-        } else {
-          console.log('No image!');
-        }
-        console.log(newSpot.image);
-        this.apiService.postSpot(newSpot);
-        this.router.navigate(['/map', this.activatedRoute.snapshot.paramMap.get('id')]);
+    const newSpot: Spot = {
+      createdBy: this.storage.getCurrentUser()?.id,
+      name: this.editSpotForm.get('spotName')?.value,
+      description: this.editSpotForm.get('spotDescription')?.value,
+      latitude: this.spotCoords.lat(),
+      longitude: this.spotCoords.lng(),
+      suitableFor: this.editSpotForm.get('sportDropdown')?.value,
+      image: ''
+    };
+    if (this.spotImage) {      
+      const encodedImage = await this.convertToBase64(this.spotImage);
+      if (encodedImage) {
+        newSpot.image = encodedImage.toString();
+      }          
+    } else {
+      console.log('No image!');
+    }
+    console.log(newSpot.image);
+    await this.apiService.postSpot(newSpot);
+    this.router.navigate(['/map', this.activatedRoute.snapshot.paramMap.get('id')]);
     // TODO: stay on same page or redirect based on api request response
   }
 
   private convertToBase64(image: File): Promise<any> {
-      const reader = new FileReader();
-      reader.readAsDataURL(image);
+    const reader = new FileReader();
+    reader.readAsDataURL(image);
 
-      return new Promise((resolve, reject) => {
-        reader.onload = function(event) {
-          resolve(event.target?.result);
-        };
-      })
+    return new Promise((resolve, reject) => {
+      reader.onload = function(event) {
+        resolve(event.target?.result);
+      };
+    });
   }
 
   public onImageChange(event: any): void {
+    console.log(event);
     this.spotImage = event.target.files[0];
+    console.log(this.spotImage);
+
     if (this.spotImage) {
       this.convertToBase64(this.spotImage);
       console.log('image changed');

@@ -8,8 +8,8 @@ import { Spot, User } from '../interfaces';
 export class ApiService {
   private readonly username = 'admin';
   private readonly password = 'REDACTED_SENSITIVE_INFO';
+  // private readonly ngrokUrl = 'https://91a3-86-19-167-105.ngrok-free.app';
   private readonly ngrokUrl = 'http://localhost:8000';
-  // private readonly ngrokUrl = 'https://8eeb-92-13-230-104.ngrok-free.app';
 
   constructor(
     private storage: LocalStorageService
@@ -23,17 +23,19 @@ export class ApiService {
         headers: {
           'Authorization': 'Basic ' + btoa(this.username + ':' + this.password),
           'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true'
         }
       });
       const data = await results.json();
-      for (const spot of data.results) {
-        // console.log(spot.image);
-        spot.image = spot.image.slice(21);
-        // console.log(spot.image);
-        spot.image = this.ngrokUrl + spot.image;
-        console.log(spot.image);
-      }
+      console.log(data.results);
+      // for (const spot of data.results) {
+      //   console.log(spot.image);
+        // spot.image = spot.image.slice(4);
+      //  fypApp\backend\media\
+        // spot.image = 'https' + spot.image;
+      //   // console.log(spot.image);
+      //   spot.image = this.ngrokUrl + spot.image;
+      //   // console.log(spot.image);
+      // }
       return data.results;
     } catch (error) {
       console.log('Failed to get spots: ' + error);
@@ -41,7 +43,26 @@ export class ApiService {
     }
   }
 
+  // public async getImage(url: string): Promise<any> {
+  //   try {
+  //     console.log('Attempting to get image from database.');
+  //     const results = await fetch('http://localhost:8000/media/27052bda-9532-41cb-9cd8-4fd78926653b.jpg', {
+  //       method: 'GET',
+  //       headers: new Headers({
+  //         'Authorization': 'Basic ' + btoa(this.username + ':' + this.password),
+  //         'Content-Type': 'image/jpeg',
+  //         // 'ngrok-skip-browser-warning': 'true'
+  //       })
+  //     });
+  //     return results;
+  //   } catch (error) {
+  //     console.log('Failed to get image: ' + error);
+  //     return undefined;
+  //   }
+  // }
+
   public async postSpot(spot: Spot): Promise<void> {
+    console.log(spot);
     try {
       console.log("Attempting to post: " + JSON.stringify(spot));
         await fetch(this.ngrokUrl + '/spots/', {
@@ -49,7 +70,6 @@ export class ApiService {
           headers: {
             'Authorization': 'Basic ' + btoa(this.username + ':' + this.password),
             'Content-Type': 'application/json',
-            'ngrok-skip-browser-warning': 'true'
           },
           body: JSON.stringify(spot)
         });
@@ -66,7 +86,6 @@ export class ApiService {
         headers: {
           'Authorization': 'Basic ' + btoa(this.username + ':' + this.password),
           'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true'
         },
         body: JSON.stringify(user)
       });
@@ -100,7 +119,6 @@ export class ApiService {
         headers: {
           'Authorization': 'Basic ' + btoa(this.username + ':' + this.password),
           'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true'
         },
         body: JSON.stringify({ username, password })
       });
@@ -130,8 +148,6 @@ export class ApiService {
         headers: {
           'Authorization': 'Basic ' + btoa(this.username + ':' + this.password),
           'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true'
-
         }
       });
       const data = await results.json();
@@ -149,8 +165,6 @@ export class ApiService {
         headers: {
           'Authorization': 'Basic ' + btoa(this.username + ':' + this.password),
           'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
-
         }
       });
       const data = await results.json();
@@ -160,10 +174,6 @@ export class ApiService {
       return '';
     }
   }
-
-  // public getNgrokUrl(): string {
-  //   return this.ngrokUrl;
-  // }
 }
 
 // TODO: log out users at some point - displaying username in top nav bar

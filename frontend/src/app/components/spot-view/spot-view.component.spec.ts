@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { SpotViewComponent } from './spot-view.component';
-import { ApiService } from '../api.service';
 import { Spot } from '../../interfaces';
+import { ApiService } from 'src/app/services/api.service';
 
 describe('SpotViewComponent', () => {
   let component: SpotViewComponent;

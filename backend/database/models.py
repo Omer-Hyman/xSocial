@@ -50,7 +50,6 @@ class Spot(models.Model):
     suitableFor = MultiSelectField(choices=sportChoices, max_length=50)
     image = models.ImageField(blank=True, null=True)
     
-
 # class SpotImage(models.Model):
 #     image = models.ImageField(blank=True, null=True, upload_to='images')
     

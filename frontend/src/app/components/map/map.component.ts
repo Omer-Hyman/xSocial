@@ -58,7 +58,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   private async markerClicked(spot: Spot): Promise<void> {
     console.log('marker clicked');
-    console.log(spot);
+    // console.log(spot);
     const modal = await this.modalController.create({
       component: SpotViewComponent,
       breakpoints: [0, 0.3, 0.5, 0.8], // where it snaps to if you drag it down
@@ -67,6 +67,5 @@ export class MapComponent implements OnInit, OnDestroy {
     });
     modal.present();
     this.mapService.setMarkersFromDB(); // very hacky fix
-
   }
 }

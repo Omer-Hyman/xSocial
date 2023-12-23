@@ -10,6 +10,7 @@ import { LocalStorageService } from 'src/app/services/local-storage.service';
 export class NavBarComponent implements OnInit {
 
   @Input() title = '';
+  @Input() displayLogout = true;
   public username = '';
 
   constructor(
