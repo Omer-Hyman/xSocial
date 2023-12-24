@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Loader } from 'google-maps';
+import { Loader } from '@googlemaps/js-api-loader';
 import { ApiService } from './api.service';
 import { Subject } from 'rxjs';
 import { } from 'googlemaps';
@@ -11,11 +11,7 @@ import mapStyleOptions from 'src/mapStyleOptions.json'
 })
 export class MapService {
 
-  private loader = new Loader('REDACTED_SENSITIVE_INFO');
-
-
-
-  
+  private loader = new Loader({apiKey: 'REDACTED_SENSITIVE_INFO'});
   private map?: google.maps.Map;
   private markers: google.maps.Marker[] = [];
   private defaultMapOptions: google.maps.MapOptions = {

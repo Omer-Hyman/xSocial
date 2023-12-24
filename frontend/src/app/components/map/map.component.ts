@@ -39,7 +39,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.mapService.setMarkersFromDB();
     const map = this.mapService.getMap();
     if (map) {
-      google.maps.event.addListener(map, 'click', ((event) => {
+      google.maps.event.addListener(map, 'click', ((event: any) => {
         this.router.navigate(['/create-spot', this.activatedRoute.snapshot.paramMap.get('id')], { state: { lat: event.latLng.lat(), lng: event.latLng.lng() } });
       }));
     } else {
