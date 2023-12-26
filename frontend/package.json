@@ -4,6 +4,7 @@
   "description": "",
   "main": "C:\\Users\\Vered\\OneDrive\\Desktop\\fypApp\\fypApp\\frontend\\src\\index.html",
   "dependencies": {
+    "@angular/cli": "^17.0.8",
     "abab": "^2.0.6",
     "abbrev": "^1.1.1",
     "accepts": "^1.3.8",
