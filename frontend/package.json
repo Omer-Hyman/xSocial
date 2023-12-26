@@ -17,8 +17,8 @@
     },
     "private": true,
     "dependencies": {
-        "@angular/common": "^15.2.9",
-        "@angular/core": "^15.0.0",
+        "@angular/common": "17.0.0",
+        "@angular/core": "17.0.0",
         "@angular/forms": "^15.0.0",
         "@angular/platform-browser": "^15.0.0",
         "@angular/platform-browser-dynamic": "^15.0.0",
@@ -38,10 +38,11 @@
         "capacitor": "0.5.5",
         "google-maps": "^4.3.3",
         "ionicons": "^6.0.3",
+        "leaflet": "^1.9.4",
         "minimatch": "^9.0.0",
         "rxjs": "~7.5.0",
         "tslib": "^2.3.0",
-        "zone.js": "~0.11.4"
+        "zone.js": "~0.14.0"
     },
     "devDependencies": {
         "@angular-devkit/build-angular": "^15.0.0",

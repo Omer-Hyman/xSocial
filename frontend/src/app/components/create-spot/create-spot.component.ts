@@ -5,7 +5,7 @@ import { Spot } from 'src/app/interfaces';
 import { ApiService } from 'src/app/services/api.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { MapService } from 'src/app/services/map.service';
-import mapStyleOptions from 'src/mapStyleOptions.json'
+import mapStyleOptions from 'src/mapStyleOptions.json';
 
 @Component({
   selector: 'app-create-spot',
@@ -51,9 +51,11 @@ export class CreateSpotComponent implements OnInit {
   // TODO: add validation to the form
 
   async ngOnInit(): Promise<void> {
-    await this.mapService.initialiseMap(this.mapOptions);
-    this.mapService.clearMarkers();
-    this.mapService.setMarker(this.spotCoords);
+    // await this.mapService.initialiseMap(this.mapOptions);
+    // this.mapService.clearMarkers();
+    // this.mapService.setMarker(this.spotCoords);
+
+
   }
 
   public async submitForm(): Promise<void> {
