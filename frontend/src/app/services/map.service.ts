@@ -15,7 +15,7 @@ export class MapService {
   private map?: google.maps.Map;
   private markers: google.maps.Marker[] = [];
   private defaultMapOptions: google.maps.MapOptions = {
-    center: { lat: 53.379590, lng: -1.478930 }, //TODO: maybe change to current device location? or where all markers are in view
+    center: { lat: 53.379590, lng: -1.478930 },
     zoom: 13,
     disableDefaultUI: true,
     styles: mapStyleOptions as google.maps.MapTypeStyle[]

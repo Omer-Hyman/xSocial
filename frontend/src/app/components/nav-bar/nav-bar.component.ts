@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
+// import { EventEmitter } from 'stream';
 
 @Component({
   selector: 'app-nav-bar',
@@ -11,6 +12,7 @@ export class NavBarComponent implements OnInit {
 
   @Input() title = '';
   @Input() displayLogout = true;
+  @Output() titleClicked = new EventEmitter<void>();
   public username = '';
 
   constructor(
@@ -24,5 +26,9 @@ export class NavBarComponent implements OnInit {
 
   public logout(): void {
     this.router.navigate(['/login']);
+  }
+
+  public emitTitleClickedEvent(): void {
+    this.titleClicked.emit();
   }
 }
