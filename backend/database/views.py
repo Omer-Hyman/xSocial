@@ -63,12 +63,10 @@ class SpotViewSet(viewsets.ModelViewSet):
             user = User.objects.get(id=foreignKeyID)
             Spot.objects.create(createdBy=user)
 
-
 class SportChoiceViewSet(viewsets.ModelViewSet):
     queryset = SportChoice.objects.all()
     serializer_class = SportChoiceSerializer
     permission_classes = [permissions.IsAuthenticated]
-
 
 # class SpotImageViewSet(viewsets.ModelViewSet):
 #     """

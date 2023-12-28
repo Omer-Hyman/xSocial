@@ -4,12 +4,6 @@ from database.models import Spot, SportChoice
 from django.contrib.auth.password_validation import validate_password
 from drf_extra_fields.fields import Base64ImageField
 
-# class UserSerializer(serializers.HyperlinkedModelSerializer):
-#     class Meta:
-#         model = User
-#         # fields = ['id', 'username', 'password', 'email', 'first_name', 'last_name', 'is_staff']
-#         fields = ['username', 'password']
-
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     
@@ -39,16 +33,12 @@ class SpotSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        print(validated_data)
         suitableForSports = validated_data.pop('suitableFor', [])
-        print(suitableForSports)
-        print(validated_data)
         spot = Spot.objects.create(**validated_data)
         for suitableForSport in suitableForSports:
-            print(suitableForSport)
-            sportChoiceName = suitableForSport.get('name')
+            sportChoiceName = suitableForSport.get('Sport')
             if sportChoiceName:
-                sportChoice = SportChoice.objects.get(name=sportChoiceName)
+                sportChoice = SportChoice.objects.get(Sport=sportChoiceName)
                 spot.suitableFor.add(sportChoice)
 
         return spot

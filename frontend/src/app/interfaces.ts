@@ -16,7 +16,7 @@ export interface Spot {
     description?: string;
     latitude: number;
     longitude: number;
-    suitableFor: ('skateboard' | 'bmx' | 'scooter' | 'roller')[];
+    suitableFor: {Sport: string}[];
     image: string;
 }
 

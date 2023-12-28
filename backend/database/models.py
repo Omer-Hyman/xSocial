@@ -1,5 +1,4 @@
 from django.db import models
-from multiselectfield import MultiSelectField
 from django.conf import settings
 from django.dispatch import receiver
 from django.db.models.signals import post_save
@@ -19,10 +18,10 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 # )
 
 class SportChoice(models.Model):
-    name = models.CharField(max_length=20)
+    Sport = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.name
+        return self.Sport
 
 class Spot(models.Model):
     createdBy = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)

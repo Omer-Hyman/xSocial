@@ -55,6 +55,10 @@ export class LeafletMapService {
   }
 
   public setMarker(coords: Coordinates): void {
+    if (!this.map)
+      console.log("MAP: " + this.map)
+    
     L.marker([coords.latitude, coords.longitude]).addTo(this.map);
   }
+
 }

@@ -8,6 +8,7 @@ import { MapService } from 'src/app/services/map.service';
 import L from 'leaflet';
 import { Position, Geolocation } from '@capacitor/geolocation';
 import { LeafletMapService } from 'src/app/services/leafletMap.service';
+import { ApiService } from 'src/app/services/api.service';
 
 @Component({
   selector: 'map-component',
@@ -24,13 +25,15 @@ export class MapComponent implements OnInit, OnDestroy {
 
   private deviceLat?: number;
   private deviceLong?: number;
+  private spots!: Spot[];
 
   constructor(
     private router: Router,
     // private mapService: MapService,
     private modalController: ModalController,
     private activatedRoute: ActivatedRoute,
-    private leafletMapService: LeafletMapService
+    private leafletMapService: LeafletMapService,
+    private apiService: ApiService
   ) {
     // this.subscription = this.mapService.getMarkerObservable().subscribe((spot) => {
     //   this.markerClicked(spot);
@@ -47,24 +50,21 @@ export class MapComponent implements OnInit, OnDestroy {
   // FIXME: content goes below device bottom border?
 
   public async ngOnInit(): Promise<void> {
-    // await this.mapService.initialiseMap();
-    // this.mapService.clearMarkers();
-    // this.mapService.setMarkersFromDB();
-    // const map = this.mapService.getMap();
-    // if (map) {
-    //   google.maps.event.addListener(map, 'click', ((event: any) => {
-    //     this.router.navigate(['/create-spot', this.activatedRoute.snapshot.paramMap.get('id')], { state: { lat: event.latLng.lat(), lng: event.latLng.lng() } });
-    //   }));
-    // } else {
-    //   console.log('no map exists for event listener!');
-    // }
-
-
     // TODO: get rid of the '?? 0's after 
     this.leafletMapService.initialiseMap({latitude: this.deviceLat ?? 0, longitude: this.deviceLong ?? 0});
     // ID can also be gotten from localstorage
+    
+    await this.placeMarkersFromDatabase();
+    await this.centerMapOnDeviceLocation();
+  }
 
+  private async placeMarkersFromDatabase(): Promise<void> {
+    this.spots = await this.apiService.getSpots();
+    for (var spot of this.spots)
+      this.leafletMapService.setMarker({latitude: spot.latitude, longitude: spot.longitude});
+  }
 
+  private async centerMapOnDeviceLocation(): Promise<void> {
     if (await this.getLocationPermission)
     {
       const deviceLocation = await this.getDeviceLocation();

@@ -58,14 +58,29 @@ export class CreateSpotComponent implements OnInit {
     this.leafletMapService.setMarker({latitude: this.spotCoords.latitude, longitude: this.spotCoords.longitude});
   }
 
+  public test(): void{
+    console.log("hi");
+    console.log(this.editSpotForm.get('sportDropdown')?.value);
+  } 
+
   public async submitForm(): Promise<void> {
+
+    var suitableForList: {Sport: string}[] = [];
+
+    for (var sport of this.editSpotForm.get('sportDropdown')?.value)
+    {
+      suitableForList.push({Sport: sport});
+    }
+    console.log(this.editSpotForm.get('sportDropdown')?.value);
+    console.log(suitableForList);
+    
     const newSpot: Spot = {
       createdBy: this.storage.getCurrentUser()?.id === 69 ? 1 : this.storage.getCurrentUser()?.id,
       name: this.editSpotForm.get('spotName')?.value,
       description: this.editSpotForm.get('spotDescription')?.value,
       latitude: this.spotCoords.latitude,
       longitude: this.spotCoords.longitude,
-      suitableFor: this.editSpotForm.get('sportDropdown')?.value,
+      suitableFor: suitableForList,
       image: ''
     };
 

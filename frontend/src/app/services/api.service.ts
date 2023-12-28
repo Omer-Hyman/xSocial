@@ -15,7 +15,7 @@ export class ApiService {
     private storage: LocalStorageService
   ) { }
 
-  public async getSpots(): Promise<Spot[] | undefined> {
+  public async getSpots(): Promise<Spot[]> {
     try {
       console.log('Attempting to get spots from database.');
       const results = await fetch(this.ngrokUrl + '/spots/', {
@@ -26,7 +26,6 @@ export class ApiService {
         }
       });
       const data = await results.json();
-      console.log(data.results);
       // for (const spot of data.results) {
       //   console.log(spot.image);
         // spot.image = spot.image.slice(4);
@@ -39,7 +38,7 @@ export class ApiService {
       return data.results;
     } catch (error) {
       console.log('Failed to get spots: ' + error);
-      return undefined;
+      return [];
     }
   }
 

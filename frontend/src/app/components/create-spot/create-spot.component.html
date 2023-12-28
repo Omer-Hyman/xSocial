@@ -1,4 +1,4 @@
-<app-nav-bar title="Create spot"></app-nav-bar>
+<app-nav-bar title="Create spot" (titleClicked)="test()"></app-nav-bar>
 <!-- <form action="http://127.0.0.1:8000/api-user-login/" method="post">
   <label for="username">Username:</label>
   <input type="text" id="username" name="username">
@@ -17,10 +17,10 @@
     </ion-item>
     <ion-item>
       <ion-select formControlName="sportDropdown" placeholder="Suitable for:" [multiple]="true" >
-        <ion-select-option value="skateboard">Skateboarding</ion-select-option>
-        <ion-select-option value="bmx">BMXing</ion-select-option>
-        <ion-select-option value="scooter">Scooter riding</ion-select-option>
-        <ion-select-option value="roller">Roller blading</ion-select-option>
+        <ion-select-option value="Skateboarding">Skateboarding</ion-select-option>
+        <ion-select-option value="BMXing">BMXing</ion-select-option>
+        <ion-select-option value="Scooter Riding">Scooter riding</ion-select-option>
+        <ion-select-option value="Roller Blading">Roller blading</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item>
