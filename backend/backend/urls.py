@@ -24,6 +24,7 @@ from django.conf import settings
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'spots', views.SpotViewSet)
+router.register(r'SportChoices', views.SportChoiceViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

@@ -61,20 +61,24 @@ export class ApiService {
   //   }
   // }
 
-  public async postSpot(spot: Spot): Promise<void> {
+  public async postSpot(spot: Spot): Promise<boolean> {
     console.log(spot);
     try {
       console.log("Attempting to post: " + JSON.stringify(spot));
-        await fetch(this.ngrokUrl + '/spots/', {
-          method: 'POST',
-          headers: {
-            'Authorization': 'Basic ' + btoa(this.username + ':' + this.password),
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(spot)
-        });
+      const response = await fetch(this.ngrokUrl + '/spots/', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Basic ' + btoa(this.username + ':' + this.password),
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(spot)
+      });
+      
+      return response.ok;
+      
     } catch (error) {
       console.log('Create spot POST failed: ' + error);
+      return false;
     }
   }
 

@@ -24,4 +24,9 @@ export interface LoggedInUser {
     id: number;
     token: string;
     username: string;
-  }
+}
+
+export interface Coordinates {
+    latitude: number;
+    longitude: number;
+}

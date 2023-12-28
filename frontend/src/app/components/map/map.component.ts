@@ -27,14 +27,19 @@ export class MapComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private mapService: MapService,
+    // private mapService: MapService,
     private modalController: ModalController,
     private activatedRoute: ActivatedRoute,
     private leafletMapService: LeafletMapService
   ) {
-    this.subscription = this.mapService.getMarkerObservable().subscribe((spot) => {
-      this.markerClicked(spot);
-    });
+    // this.subscription = this.mapService.getMarkerObservable().subscribe((spot) => {
+    //   this.markerClicked(spot);
+    // });
+    this.subscription = this.leafletMapService.getMarkerObservable().subscribe((Coordinates) => {
+      this.router.navigate(['/create-spot', this.activatedRoute.snapshot.paramMap.get('id')], { state: 
+        { lat: Coordinates.latitude, lng: Coordinates.longitude } 
+      });
+    })
   }
 
   private subscription: Subscription;
@@ -54,8 +59,10 @@ export class MapComponent implements OnInit, OnDestroy {
     //   console.log('no map exists for event listener!');
     // }
 
-    this.leafletMapService.initialiseMap(this.deviceLat, this.deviceLong);
 
+    // TODO: get rid of the '?? 0's after 
+    this.leafletMapService.initialiseMap({latitude: this.deviceLat ?? 0, longitude: this.deviceLong ?? 0});
+    // ID can also be gotten from localstorage
 
 
     if (await this.getLocationPermission)
@@ -63,14 +70,9 @@ export class MapComponent implements OnInit, OnDestroy {
       const deviceLocation = await this.getDeviceLocation();
       this.deviceLat = deviceLocation!.coords.latitude;
       this.deviceLong = deviceLocation!.coords.longitude;
-      this.leafletMapService.moveMap(this.deviceLat, this.deviceLong);
+      this.leafletMapService.moveMap({latitude: this.deviceLat, longitude: this.deviceLong});
     }
   }
-
-  public trying(): void {
-    this.leafletMapService.checkDiv();
-  }
-  
 
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();
@@ -103,7 +105,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   public clearMarkers(): void {
     console.log('markers cleared!');
-    this.mapService.clearMarkers();
+    // this.mapService.clearMarkers();
   }
 
   private async markerClicked(spot: Spot): Promise<void> {
@@ -116,6 +118,6 @@ export class MapComponent implements OnInit, OnDestroy {
       componentProps: { spot: spot }
     });
     modal.present();
-    this.mapService.setMarkersFromDB(); // very hacky fix
+    // this.mapService.setMarkersFromDB(); // very hacky fix
   }
 }

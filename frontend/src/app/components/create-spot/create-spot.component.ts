@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Spot } from 'src/app/interfaces';
+import { Coordinates, Spot } from 'src/app/interfaces';
 import { ApiService } from 'src/app/services/api.service';
+import { LeafletMapService } from 'src/app/services/leafletMap.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { MapService } from 'src/app/services/map.service';
 import mapStyleOptions from 'src/mapStyleOptions.json';
@@ -18,8 +19,8 @@ import mapStyleOptions from 'src/mapStyleOptions.json';
 export class CreateSpotComponent implements OnInit {
 
   public editSpotForm!: FormGroup;
-  private spotCoords!: google.maps.LatLng;
-  private mapOptions!: google.maps.MapOptions;
+  private spotCoords!: Coordinates;
+  // private mapOptions!: google.maps.MapOptions;
   private spotImage?: File;
   public userID: string;
 
@@ -29,7 +30,8 @@ export class CreateSpotComponent implements OnInit {
     private router: Router,
     private apiService: ApiService,
     private storage: LocalStorageService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private leafletMapService: LeafletMapService
   ) {
     this.editSpotForm = this.formBuilder.group({
       spotName: [''],
@@ -37,37 +39,36 @@ export class CreateSpotComponent implements OnInit {
       sportDropdown: [''],
       image: []
     })
-    this.spotCoords = new google.maps.LatLng(history.state.lat, history.state.lng);
-    this.mapOptions = {
-      center: JSON.parse(JSON.stringify(this.spotCoords)),
-      zoom: 14,
-      disableDefaultUI: true,
-      styles: mapStyleOptions as google.maps.MapTypeStyle[]
-    };
+    // this.spotCoords = new google.maps.LatLng(history.state.lat, history.state.lng);
+    // this.mapOptions = {
+    //   center: JSON.parse(JSON.stringify(this.spotCoords)),
+    //   zoom: 14,
+    //   disableDefaultUI: true,
+    //   styles: mapStyleOptions as google.maps.MapTypeStyle[]
+    // };
+
     this.userID = this.activatedRoute.snapshot.paramMap.get('id') ?? '';
   }
 
-  // TODO: Change styling of this map? - Need to get rid of the small information bar at the bottom of the map
   // TODO: add validation to the form
 
   async ngOnInit(): Promise<void> {
-    // await this.mapService.initialiseMap(this.mapOptions);
-    // this.mapService.clearMarkers();
-    // this.mapService.setMarker(this.spotCoords);
-
-
+    this.spotCoords = {latitude: history.state.lat, longitude: history.state.lng};
+    this.leafletMapService.initialiseMap({latitude: this.spotCoords.latitude, longitude: this.spotCoords.longitude}, 13);
+    this.leafletMapService.setMarker({latitude: this.spotCoords.latitude, longitude: this.spotCoords.longitude});
   }
 
   public async submitForm(): Promise<void> {
     const newSpot: Spot = {
-      createdBy: this.storage.getCurrentUser()?.id,
+      createdBy: this.storage.getCurrentUser()?.id === 69 ? 1 : this.storage.getCurrentUser()?.id,
       name: this.editSpotForm.get('spotName')?.value,
       description: this.editSpotForm.get('spotDescription')?.value,
-      latitude: this.spotCoords.lat(),
-      longitude: this.spotCoords.lng(),
+      latitude: this.spotCoords.latitude,
+      longitude: this.spotCoords.longitude,
       suitableFor: this.editSpotForm.get('sportDropdown')?.value,
       image: ''
     };
+
     if (this.spotImage) {      
       const encodedImage = await this.convertToBase64(this.spotImage);
       if (encodedImage) {
@@ -77,9 +78,8 @@ export class CreateSpotComponent implements OnInit {
       console.log('No image!');
     }
     console.log(newSpot.image);
-    await this.apiService.postSpot(newSpot);
-    this.router.navigate(['/map', this.activatedRoute.snapshot.paramMap.get('id')]);
-    // TODO: stay on same page or redirect based on api request response
+    if (await this.apiService.postSpot(newSpot))
+      this.router.navigate(['/map', this.activatedRoute.snapshot.paramMap.get('id')]);
   }
 
   private convertToBase64(image: File): Promise<any> {

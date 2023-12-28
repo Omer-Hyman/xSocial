@@ -3,8 +3,8 @@ from django.http import HttpResponse
 # from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from rest_framework import viewsets, permissions
-from database.serializers import UserSerializer, SpotSerializer
-from database.models import Spot
+from database.serializers import UserSerializer, SpotSerializer, SportChoiceSerializer
+from database.models import Spot, SportChoice
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -63,6 +63,11 @@ class SpotViewSet(viewsets.ModelViewSet):
             user = User.objects.get(id=foreignKeyID)
             Spot.objects.create(createdBy=user)
 
+
+class SportChoiceViewSet(viewsets.ModelViewSet):
+    queryset = SportChoice.objects.all()
+    serializer_class = SportChoiceSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
 # class SpotImageViewSet(viewsets.ModelViewSet):

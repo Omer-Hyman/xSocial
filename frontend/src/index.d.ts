@@ -1,2 +1,2 @@
-declare module 'googlemaps';
+// declare module 'googlemaps';
 // declare module 'leaflet';
