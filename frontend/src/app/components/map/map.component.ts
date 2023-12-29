@@ -26,6 +26,8 @@ export class MapComponent implements OnInit, OnDestroy {
   private deviceLat?: number;
   private deviceLong?: number;
   private spots!: Spot[];
+  private mapClickedSubscription: Subscription;
+  private markerClickedSubscription: Subscription;
 
   constructor(
     private router: Router,
@@ -38,14 +40,17 @@ export class MapComponent implements OnInit, OnDestroy {
     // this.subscription = this.mapService.getMarkerObservable().subscribe((spot) => {
     //   this.markerClicked(spot);
     // });
-    this.subscription = this.leafletMapService.getMarkerObservable().subscribe((Coordinates) => {
+    this.mapClickedSubscription = this.leafletMapService.getMapClickedObservable().subscribe((Coordinates) => {
       this.router.navigate(['/create-spot', this.activatedRoute.snapshot.paramMap.get('id')], { state: 
         { lat: Coordinates.latitude, lng: Coordinates.longitude } 
       });
+    });
+
+    this.markerClickedSubscription = this.leafletMapService.getMarkerClickedObservable().subscribe((Spot) => {
+      this.markerClicked(Spot);
     })
   }
 
-  private subscription: Subscription;
 
   // FIXME: content goes below device bottom border?
 
@@ -75,7 +80,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.mapClickedSubscription.unsubscribe();
   }
 
   private async getDeviceLocation(): Promise<Position | undefined> {
@@ -101,7 +106,6 @@ export class MapComponent implements OnInit, OnDestroy {
       return false;
     }
   }
-  
 
   public clearMarkers(): void {
     console.log('markers cleared!');
@@ -109,7 +113,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private async markerClicked(spot: Spot): Promise<void> {
-    console.log('marker clicked');
+    // console.log('marker clicked');
     // console.log(spot);
     const modal = await this.modalController.create({
       component: SpotViewComponent,

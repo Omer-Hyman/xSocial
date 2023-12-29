@@ -1,7 +1,8 @@
-import { AfterViewInit, Injectable } from '@angular/core';
-import L, { LatLng } from 'leaflet';
+import { Injectable } from '@angular/core';
+import L from 'leaflet';
 import { Observable, Subject } from 'rxjs';
-import { Coordinates } from '../interfaces';
+import { Coordinates, Spot } from '../interfaces';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,13 @@ export class LeafletMapService {
 
   private map!: L.Map;
   private mapElement?: HTMLElement;
-  private markerSubject = new Subject<Coordinates>();
+  private mapCLicked = new Subject<Coordinates>();
+  private markerClicked = new Subject<Spot>();
+  private markers: L.Marker[] = []; 
+
+  constructor(
+    private apiService: ApiService
+  ) {}
 
   public checkDiv(): void {
     console.log("Checking div");
@@ -37,16 +44,37 @@ export class LeafletMapService {
       attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(this.map);
 
-    this.map.on('click', (event) => {
-      L.marker([event.latlng.lat, event.latlng.lng]).addTo(this.map);
-      const lat = event.latlng.lat;
-      const long = event.latlng.lng;
-      this.markerSubject.next({latitude: lat, longitude: long});
-    })
+    // this.map.on('click', (event) => {
+    //   L.DomEvent.stopPropagation(event);
+    //   const lat = event.latlng.lat;
+    //   const long = event.latlng.lng;
+    //   this.setMarker({latitude: lat, longitude: long});
+    //   this.mapCLicked.next({latitude: lat, longitude: long});
+    // });
   }
 
-  public getMarkerObservable(): Observable<Coordinates> {
-    return this.markerSubject.asObservable();
+  public async setMarkersFromDB(): Promise<void> { // TODO: maybe do this as an observable/subscription?
+    this.map.clearAllEventListeners();
+  
+    const spots = await this.apiService.getSpots();
+    if (spots) {
+      this.markers = [];
+      for (const spot of spots) {
+        const marker = this.setMarker({latitude: spot.latitude, longitude: spot.longitude });
+        // marker.on('click', (event) => {
+        //   console.log("Marker clicked!");
+        //   L.DomEvent.stopPropagation(event);
+        //   this.markerClicked.next(spot);
+        // });
+      }
+    }
+  }
+
+  public getMapClickedObservable(): Observable<Coordinates> {
+    return this.mapCLicked.asObservable();
+  }
+  public getMarkerClickedObservable(): Observable<Spot> {
+    return this.markerClicked.asObservable();
   }
 
   public moveMap(coords: Coordinates): void {
@@ -54,11 +82,18 @@ export class LeafletMapService {
     this.map.panTo(new L.LatLng(coords.latitude, coords.longitude));
   }
 
-  public setMarker(coords: Coordinates): void {
-    if (!this.map)
-      console.log("MAP: " + this.map)
-    
-    L.marker([coords.latitude, coords.longitude]).addTo(this.map);
+  public setMarker(coords: Coordinates): L.Marker {
+    const marker = L.marker([coords.latitude, coords.longitude]).addTo(this.map).on('click', function(e) {
+      
+      L.DomEvent.stopPropagation(e);
+      console.log('markerClicked');
+    });
+    this.markers.push(marker);
+    return marker;
   }
 
+  private clearAllMarkers(): void {
+    for (const marker of this.markers)
+      marker.remove();
+  }
 }
