@@ -54,18 +54,13 @@ export class LeafletMapService {
   }
 
   public async setMarkersFromDB(): Promise<void> { // TODO: maybe do this as an observable/subscription?
-    this.map.clearAllEventListeners();
+    // this.map.clearAllEventListeners();
   
     const spots = await this.apiService.getSpots();
     if (spots) {
       this.markers = [];
       for (const spot of spots) {
-        const marker = this.setMarker({latitude: spot.latitude, longitude: spot.longitude });
-        // marker.on('click', (event) => {
-        //   console.log("Marker clicked!");
-        //   L.DomEvent.stopPropagation(event);
-        //   this.markerClicked.next(spot);
-        // });
+        this.setMarker({latitude: spot.latitude, longitude: spot.longitude }, spot.id);
       }
     }
   }
@@ -82,11 +77,17 @@ export class LeafletMapService {
     this.map.panTo(new L.LatLng(coords.latitude, coords.longitude));
   }
 
-  public setMarker(coords: Coordinates): L.Marker {
-    const marker = L.marker([coords.latitude, coords.longitude]).addTo(this.map).on('click', function(e) {
+  // TODO: Create different classes - to and from the database
+  // TODO: that way you can use id's to search for a spot using a marker
+
+  public setMarker(coords: Coordinates, spotID?: number): L.Marker {
+    const marker = L.marker([coords.latitude, coords.longitude]).addTo(this.map).on('click', async (e) => {
       
       L.DomEvent.stopPropagation(e);
+      const spot = await this.apiService.getSpot(spotID ?? 0)
+      this.markerClicked.next(spot);
       console.log('markerClicked');
+      console.log(spot);
     });
     this.markers.push(marker);
     return marker;

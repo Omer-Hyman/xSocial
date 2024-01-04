@@ -31,6 +31,8 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api-user-login/', views.UserLogIn.as_view()),
     path('api-user-registration/', views.UserRegistrationView.as_view()),
+    path('spot/<int:pk>/', views.SpotViewSet.as_view({'get': 'get'})),
+    path('spots/', views.SpotViewSet.as_view({'get': 'getAll'})),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     re_path(r'^$', RedirectView.as_view(url=reverse_lazy('api-root'), permanent=False)),
     ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

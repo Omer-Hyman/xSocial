@@ -5,11 +5,11 @@ from django.contrib.auth.password_validation import validate_password
 from drf_extra_fields.fields import Base64ImageField
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
-    
     class Meta:
         model = User
-        fields = ['id','username', 'password']
+        fields = ['__all__']
+
+    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])    
     
     # def create(self, validated_data):
     #     user = User.objects.create_user(
@@ -23,14 +23,14 @@ class SportChoiceSerializer(serializers.ModelSerializer):
         model = SportChoice
         fields = '__all__'
 
-class SpotSerializer(serializers.HyperlinkedModelSerializer):
-    createdBy = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), allow_null=True)
-    suitableFor = SportChoiceSerializer(many=True, read_only=False)
-    image=Base64ImageField()
-
+class SpotSerializer(serializers.ModelSerializer):
     class Meta:
         model = Spot
         fields = '__all__'
+
+    createdBy = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), allow_null=True)
+    suitableFor = SportChoiceSerializer(many=True, read_only=False)
+    image=Base64ImageField()
 
     def create(self, validated_data):
         suitableForSports = validated_data.pop('suitableFor', [])

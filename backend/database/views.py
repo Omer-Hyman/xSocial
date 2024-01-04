@@ -1,14 +1,13 @@
-# from django.shortcuts import render, redirect
 from django.http import HttpResponse
-# from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, generics, status
 from database.serializers import UserSerializer, SpotSerializer, SportChoiceSerializer
 from database.models import Spot, SportChoice
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from rest_framework import generics, status
+from rest_framework.decorators import action
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -56,17 +55,31 @@ class SpotViewSet(viewsets.ModelViewSet):
     serializer_class = SpotSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         serialized = self.serializer_class(data=request.data, context={'request': request})
         if serialized.is_valid():
             foreignKeyID = request.data.get('createdBy')
             user = User.objects.get(id=foreignKeyID)
             Spot.objects.create(createdBy=user)
 
+    @action(detail=True, methods=['GET'])
+    def get(self, request, pk=None):
+        spot = self.get_object()
+        serializer = self.get_serializer(spot)
+        print(serializer.data)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['GET'])
+    def getAll(self, request):
+        spots = self.get_queryset()
+        serializer = self.get_serializer(spots, many=True)
+        return Response(serializer.data)
+
 class SportChoiceViewSet(viewsets.ModelViewSet):
     queryset = SportChoice.objects.all()
     serializer_class = SportChoiceSerializer
     permission_classes = [permissions.IsAuthenticated]
+
 
 # class SpotImageViewSet(viewsets.ModelViewSet):
 #     """

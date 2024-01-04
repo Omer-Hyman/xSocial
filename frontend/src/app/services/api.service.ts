@@ -15,6 +15,24 @@ export class ApiService {
     private storage: LocalStorageService
   ) { }
 
+  public async getSpot(spotID: number): Promise<Spot> {
+    try {
+      console.log('Attempting to get spot ' + spotID + ' from database.');
+      const results = await fetch(this.ngrokUrl + '/spot/' + spotID, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Basic ' + btoa(this.username + ':' + this.password),
+          'Content-Type': 'application/json',
+        }
+      });
+      const data = await results.json();
+      return data.results;
+    } catch (error) {
+      console.log('Failed to get spot: ' + error);
+      return {} as Spot;
+    }
+  }
+
   public async getSpots(): Promise<Spot[]> {
     try {
       console.log('Attempting to get spots from database.');
@@ -26,15 +44,6 @@ export class ApiService {
         }
       });
       const data = await results.json();
-      // for (const spot of data.results) {
-      //   console.log(spot.image);
-        // spot.image = spot.image.slice(4);
-      //  fypApp\backend\media\
-        // spot.image = 'https' + spot.image;
-      //   // console.log(spot.image);
-      //   spot.image = this.ngrokUrl + spot.image;
-      //   // console.log(spot.image);
-      // }
       return data.results;
     } catch (error) {
       console.log('Failed to get spots: ' + error);
