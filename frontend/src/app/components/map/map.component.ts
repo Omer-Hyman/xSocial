@@ -4,8 +4,6 @@ import { ModalController } from '@ionic/angular';
 import { SpotViewComponent } from '../spot-view/spot-view.component';
 import { Subscription } from 'rxjs';
 import { Spot } from 'src/app/interfaces';
-import { MapService } from 'src/app/services/map.service';
-import L from 'leaflet';
 import { Position, Geolocation } from '@capacitor/geolocation';
 import { LeafletMapService } from 'src/app/services/leafletMap.service';
 import { ApiService } from 'src/app/services/api.service';
@@ -19,7 +17,7 @@ import { ApiService } from 'src/app/services/api.service';
   }
 })
 
-// Can probs be changed to a page, just the actual map that needs to be a component
+// TODO: Can probs be changed to a page, just the actual map that needs to be a component
 
 export class MapComponent implements OnInit, OnDestroy {
 
@@ -58,15 +56,18 @@ export class MapComponent implements OnInit, OnDestroy {
     // TODO: get rid of the '?? 0's after 
     this.leafletMapService.initialiseMap({latitude: this.deviceLat ?? 0, longitude: this.deviceLong ?? 0});
     // ID can also be gotten from localstorage
-    
+
+    // await this.leafletMapService.setMarkersFromDB();
     await this.placeMarkersFromDatabase();
     await this.centerMapOnDeviceLocation();
+
+    this.leafletMapService.testingMarkerClicked();
   }
 
   private async placeMarkersFromDatabase(): Promise<void> {
     this.spots = await this.apiService.getSpots();
     for (var spot of this.spots)
-      this.leafletMapService.setMarker({latitude: spot.latitude, longitude: spot.longitude});
+      this.leafletMapService.setMarkerUsingSpot(spot);
   }
 
   private async centerMapOnDeviceLocation(): Promise<void> {

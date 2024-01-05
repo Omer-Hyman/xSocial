@@ -64,8 +64,6 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  // TODO: put all services into their own folder I guess
-
   public async register(): Promise<void> {
     this.registerErrorMessages = [];
     console.log("Registering new user with details: ");

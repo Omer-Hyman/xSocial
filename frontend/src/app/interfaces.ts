@@ -11,7 +11,7 @@ export interface User {
 
 export interface Spot {
     /** Username */
-    id: number;
+    id?: number;
     createdBy?: number; 
     name: string;
     description?: string;

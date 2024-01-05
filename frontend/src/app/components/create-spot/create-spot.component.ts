@@ -59,7 +59,6 @@ export class CreateSpotComponent implements OnInit {
   }
 
   public test(): void{
-    console.log("hi");
     console.log(this.editSpotForm.get('sportDropdown')?.value);
   } 
 
