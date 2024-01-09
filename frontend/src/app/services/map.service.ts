@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
-import { ApiService } from './api.service';
+import { ApiService } from './ApiService/api.service';
 import { Subject } from 'rxjs';
 // import { } from 'googlemaps';
 import { Spot } from '../interfaces';

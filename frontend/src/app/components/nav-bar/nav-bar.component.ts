@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
-import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { LocalStorageService } from 'src/app/services/LocalStorageService/local-storage.service';
 // import { EventEmitter } from 'stream';
 
 @Component({

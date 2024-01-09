@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Spot } from '../../interfaces';
-import { ApiService } from 'src/app/services/api.service';
+import { ApiService } from 'src/app/services/ApiService/api.service';
 
 @Component({
   selector: 'app-spot-view',

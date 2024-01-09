@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Coordinates, Spot } from 'src/app/interfaces';
-import { ApiService } from 'src/app/services/api.service';
+import { ApiService } from 'src/app/services/ApiService/api.service';
 import { LeafletMapService } from 'src/app/services/leafletMap.service';
-import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { LocalStorageService } from 'src/app/services/LocalStorageService/local-storage.service';
 import { MapService } from 'src/app/services/map.service';
 import mapStyleOptions from 'src/mapStyleOptions.json';
 
@@ -31,7 +31,7 @@ export class CreateSpotComponent implements OnInit {
     private apiService: ApiService,
     private storage: LocalStorageService,
     private activatedRoute: ActivatedRoute,
-    private leafletMapService: LeafletMapService
+    // private leafletMapService: LeafletMapService
   ) {
     this.editSpotForm = this.formBuilder.group({
       spotName: [''],
@@ -54,8 +54,8 @@ export class CreateSpotComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.spotCoords = {latitude: history.state.lat, longitude: history.state.lng};
-    this.leafletMapService.initialiseMap({latitude: this.spotCoords.latitude, longitude: this.spotCoords.longitude}, 13);
-    this.leafletMapService.setMarker({latitude: this.spotCoords.latitude, longitude: this.spotCoords.longitude});
+    // this.leafletMapService.initialiseMap({latitude: this.spotCoords.latitude, longitude: this.spotCoords.longitude}, 13);
+    // this.leafletMapService.setMarker({latitude: this.spotCoords.latitude, longitude: this.spotCoords.longitude});
   }
 
   public test(): void{
@@ -93,7 +93,7 @@ export class CreateSpotComponent implements OnInit {
     }
     console.log(newSpot.image);
     if (await this.apiService.postSpot(newSpot))
-      this.router.navigate(['/map', this.activatedRoute.snapshot.paramMap.get('id')]);
+      this.router.navigate(['/home', this.activatedRoute.snapshot.paramMap.get('id')]);
   }
 
   private convertToBase64(image: File): Promise<any> {

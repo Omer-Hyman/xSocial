@@ -24,3 +24,24 @@
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
+
+
+
+body, html {
+    height: 100%;
+    width: 100%;
+
+
+}
+  
+app-root {
+    height: 100%;
+    width: 100%;
+    // display: flex;
+    // flex-direction: column;
+}
+
+// router-outlet {
+//     flex: 1; /* Allow the router-outlet to take up the remaining height */
+//     overflow-y: auto; /* Add a scrollbar if content exceeds viewport height */
+// }

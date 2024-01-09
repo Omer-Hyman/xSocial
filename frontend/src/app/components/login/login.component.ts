@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { User } from 'src/app/interfaces';
-import { ApiService } from 'src/app/services/api.service';
-import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { ApiService } from 'src/app/services/ApiService/api.service';
+import { LocalStorageService } from 'src/app/services/LocalStorageService/local-storage.service';
 
 @Component({
   selector: 'login-component',
@@ -46,7 +46,7 @@ export class LoginComponent implements OnInit {
         this.loginForm.get('username')?.value == "admin" && 
         this.loginForm.get('password')?.value == "donga")
       {
-        this.router.navigate(['/map', 69]);
+        this.router.navigate(['/home', 69]);
         this.storage.setLoggedInUser({
           id: 69,
           token: "123",
@@ -57,7 +57,7 @@ export class LoginComponent implements OnInit {
       }
 
       const result = await this.apiService.login(this.loginForm.get('username')?.value, this.loginForm.get('password')?.value);
-      result ? this.router.navigate(['/map', this.storage.getCurrentUser()?.id]) : this.invalidLogin = true;
+      result ? this.router.navigate(['/home', this.storage.getCurrentUser()?.id]) : this.invalidLogin = true;
     } else {
       this.invalidLogin = true;
       this.loginForm.markAllAsTouched();
@@ -77,7 +77,7 @@ export class LoginComponent implements OnInit {
       if (registerResult[0] === 'ok') {
         const loginResult = await this.apiService.login(this.loginForm.get('username')?.value, this.loginForm.get('password')?.value);
         if (loginResult) {
-          this.router.navigate(['/map', this.storage.getCurrentUser()?.id]);
+          this.router.navigate(['/home', this.storage.getCurrentUser()?.id]);
         } else {
           console.log('log in after register failed!!!');
         }

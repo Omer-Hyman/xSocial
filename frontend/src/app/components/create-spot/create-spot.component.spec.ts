@@ -4,9 +4,9 @@ import { CreateSpotComponent } from './create-spot.component';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { MapService } from 'src/app/services/map.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ApiService } from 'src/app/services/api.service';
+import { ApiService } from 'src/app/services/ApiService/api.service';
 import { Spot } from 'src/app/interfaces';
-import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { LocalStorageService } from 'src/app/services/LocalStorageService/local-storage.service';
 
 describe('CreateSpotComponent', () => {
   let component: CreateSpotComponent;
