@@ -22,8 +22,6 @@ export class NavBarComponent implements OnInit {
 
   public ngOnInit(): void {
     this.username = this.storage.getCurrentUser()?.username ?? '';
-    console.log("testing");
-    console.log(this.username);
   }
 
   public logout(): void {

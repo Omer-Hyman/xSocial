@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Coordinates, Spot } from 'src/app/interfaces';
 import { ApiService } from 'src/app/services/ApiService/api.service';
 import { LocalStorageService } from 'src/app/services/LocalStorageService/local-storage.service';
-import { MapService } from 'src/app/services/map.service';
 
 @Component({
   selector: 'app-create-spot',
@@ -13,19 +12,16 @@ import { MapService } from 'src/app/services/map.service';
 })
 export class CreateSpotPage implements OnInit {  
   public editSpotForm!: FormGroup;
-  private spotCoords!: Coordinates;
-  // private mapOptions!: google.maps.MapOptions;
+  @Input() public spotCoords!: Coordinates; // TODO: switch this to using query params
   private spotImage?: File;
   public userID: string;
 
   constructor(
     private formBuilder: FormBuilder,
-    private mapService: MapService,
     private router: Router,
     private apiService: ApiService,
     private storage: LocalStorageService,
     private activatedRoute: ActivatedRoute,
-    // private leafletMapService: LeafletMapService
   ) {
     this.editSpotForm = this.formBuilder.group({
       spotName: [''],
@@ -33,7 +29,7 @@ export class CreateSpotPage implements OnInit {
       sportDropdown: [''],
       image: []
     })
-    // this.spotCoords = new google.maps.LatLng(history.state.lat, history.state.lng);
+    this.spotCoords = {latitude: history.state.lat, longitude: history.state.lng};
     // this.mapOptions = {
     //   center: JSON.parse(JSON.stringify(this.spotCoords)),
     //   zoom: 14,

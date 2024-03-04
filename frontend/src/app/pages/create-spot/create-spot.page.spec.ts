@@ -5,11 +5,11 @@ describe('CreateSpotPage', () => {
   let component: CreateSpotPage;
   let fixture: ComponentFixture<CreateSpotPage>;
 
-  beforeEach(waitForAsync () => {
-    fixture = TestBed.createComponent(CreateSpotPage);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+  // beforeEach(waitForAsync () => {
+  //   fixture = TestBed.createComponent(CreateSpotPage);
+  //   component = fixture.componentInstance;
+  //   fixture.detectChanges();
+  // });
 
   it('should create', () => {
     expect(component).toBeTruthy();

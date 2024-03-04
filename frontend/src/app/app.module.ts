@@ -3,8 +3,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SpotViewComponent } from './components/spot-view/spot-view.component';
-import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
-import { CreateSpotComponent } from './components/create-spot/create-spot.component';
+import { HTTP_INTERCEPTORS } from "@angular/common/http";
 import { LoginComponent } from './components/login/login.component';
 import { MapComponent } from './components/map/map.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
@@ -22,7 +21,6 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
     AppComponent, 
     MapComponent, 
     LoginComponent,
-    CreateSpotComponent,
     SpotViewComponent,
     HomeComponent,
     NavBarComponent,
