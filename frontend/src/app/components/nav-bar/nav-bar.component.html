@@ -24,10 +24,13 @@
     </ion-list>
   </ion-content>
 </ion-menu> -->
-<ion-toolbar>
-  <ion-buttons id="toolbarButtons" *ngIf="displayLogout" slot="end">
-    <!-- <ion-menu-button></ion-menu-button> -->
-    <ion-button (click)="emitTitleClickedEvent()">{{title}} {{username}}</ion-button>
-    <ion-button id="logoutButton" (click)="logout()">Log Out</ion-button>
-  </ion-buttons>
-</ion-toolbar>
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons id="toolbarButtons">
+      <!-- <ion-menu-button></ion-menu-button> -->
+      <ion-title (click)="emitTitleClickedEvent()">{{title}} {{username}}</ion-title>
+      <!-- <ion-button ></ion-button> -->
+      <ion-button id="logoutButton" (click)="logout()" *ngIf="displayLogout">Log Out</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>

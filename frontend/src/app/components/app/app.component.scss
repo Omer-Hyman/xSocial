@@ -3,7 +3,7 @@ ion-app {
     height: 100%;
     // display: flex;
     
-    // router-outlet {
-    //     flex-grow: 1;
-    // }
+    router-outlet {
+        flex-grow: 1;
+    }
 }

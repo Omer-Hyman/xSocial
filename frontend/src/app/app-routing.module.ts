@@ -13,19 +13,7 @@ const routes: Routes = [
   // { path: 'map/:id', component: MapComponent, title: 'Map'},
   { path: 'create-spot/:id', component: CreateSpotComponent, title: 'Create spot' },
   { path: 'home/:id', component: HomeComponent, title: 'Home' },
-  { path: '**', component: LoginComponent, title: 'Login or register' },
-  {
-    path: 'home',
-    loadChildren: () => import('./pages/home/home.module').then( m => m.HomePageModule)
-  },
-  {
-    path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
-  },
-  {
-    path: 'create-spot',
-    loadChildren: () => import('./pages/create-spot/create-spot.module').then( m => m.CreateSpotPageModule)
-  },
+  { path: '**', component: LoginPage, title: 'Login or register' },
 ];
 @NgModule({
   imports: [

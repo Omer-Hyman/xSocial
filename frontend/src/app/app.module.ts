@@ -1,7 +1,4 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { RouteReuseStrategy } from '@angular/router';
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -13,16 +10,25 @@ import { MapComponent } from './components/map/map.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { TokenInterceptor } from './token.interceptor';
 import { HomeComponent } from './components/home/home.component';
+import { LoginPage } from './pages/login/login.page';
+import { CreateSpotPage } from './pages/create-spot/create-spot.page';
+import { HomePage } from './pages/home/home.page';
+import { BrowserModule } from '@angular/platform-browser';
+import { RouteReuseStrategy } from '@angular/router';
+import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
 @NgModule({
   declarations: [
     AppComponent, 
     MapComponent, 
-    LoginComponent, 
-    NavBarComponent, 
+    LoginComponent,
     CreateSpotComponent,
     SpotViewComponent,
-    HomeComponent
+    HomeComponent,
+    NavBarComponent,
+    LoginPage,
+    CreateSpotPage,
+    HomePage
   ],
   imports: [
     BrowserModule,
