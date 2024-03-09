@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MapComponent } from 'src/app/components/map/map.component';
+import { StateManagementService } from 'src/app/services/StateManagementService/state-management.service';
 
 @Component({
   selector: 'app-home',
@@ -7,9 +9,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomePage implements OnInit {
 
-  constructor() { }
+  @ViewChild(MapComponent) mapComponent!: MapComponent;
 
-  ngOnInit() {
+  constructor(
+    private stateManagementService: StateManagementService
+  ) { }
+
+  async ngOnInit() {
+    await this.stateManagementService.getDeviceLocation();
+    if (this.stateManagementService.deviceLocation)
+      this.stateManagementService.setMainMarkerCoordinates(this.stateManagementService.deviceLocation);
   }
 
 }

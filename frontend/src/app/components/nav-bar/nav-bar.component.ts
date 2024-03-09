@@ -29,6 +29,7 @@ export class NavBarComponent implements OnInit {
   }
 
   public emitTitleClickedEvent(): void {
+    // this.router.navigate(['/home']);
     this.titleClicked.emit();
   }
 }

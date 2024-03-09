@@ -186,6 +186,24 @@ export class ApiService {
       return '';
     }
   }
+
+  // public async clearAllSpots(): Promise<boolean> {
+  //   try {
+  //     const results = await fetch(this.ngrokUrl + `/users/${userID}`, {
+  //       method: 'GET',
+  //       headers: {
+  //         'Authorization': 'Basic ' + btoa(this.username + ':' + this.password),
+  //         'Content-Type': 'application/json',
+  //       }
+  //     });
+  //     const data = await results.json();
+  //     return data.results;
+  //   } catch (error) {
+  //     console.log('GET user failed: ' + error);
+  //   }
+
+  //   return true;
+  // }
 }
 
-// TODO: log out users at some point - displaying username in top nav bar
+// TODO: log out users at some point 

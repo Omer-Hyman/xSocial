@@ -1,9 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { MapComponent } from 'src/app/components/map/map.component';
 import { Coordinates, Spot } from 'src/app/interfaces';
 import { ApiService } from 'src/app/services/ApiService/api.service';
 import { LocalStorageService } from 'src/app/services/LocalStorageService/local-storage.service';
+import { StateManagementService } from 'src/app/services/StateManagementService/state-management.service';
 
 @Component({
   selector: 'app-create-spot',
@@ -12,9 +14,9 @@ import { LocalStorageService } from 'src/app/services/LocalStorageService/local-
 })
 export class CreateSpotPage implements OnInit {  
   public editSpotForm!: FormGroup;
-  @Input() public spotCoords!: Coordinates; // TODO: switch this to using query params
   private spotImage?: File;
   public userID: string;
+  @ViewChild(MapComponent) mapComponent!: MapComponent;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -22,6 +24,7 @@ export class CreateSpotPage implements OnInit {
     private apiService: ApiService,
     private storage: LocalStorageService,
     private activatedRoute: ActivatedRoute,
+    private stateManagementService: StateManagementService
   ) {
     this.editSpotForm = this.formBuilder.group({
       spotName: [''],
@@ -29,21 +32,14 @@ export class CreateSpotPage implements OnInit {
       sportDropdown: [''],
       image: []
     })
-    this.spotCoords = {latitude: history.state.lat, longitude: history.state.lng};
-    // this.mapOptions = {
-    //   center: JSON.parse(JSON.stringify(this.spotCoords)),
-    //   zoom: 14,
-    //   disableDefaultUI: true,
-    //   styles: mapStyleOptions as google.maps.MapTypeStyle[]
-    // };
-
     this.userID = this.activatedRoute.snapshot.paramMap.get('id') ?? '';
   }
 
   // TODO: add validation to the form
+  // TODO: Marker on centre of spot
 
   async ngOnInit(): Promise<void> {
-    this.spotCoords = {latitude: history.state.lat, longitude: history.state.lng};
+
     // this.leafletMapService.initialiseMap({latitude: this.spotCoords.latitude, longitude: this.spotCoords.longitude}, 13);
     // this.leafletMapService.setMarker({latitude: this.spotCoords.latitude, longitude: this.spotCoords.longitude});
   }
@@ -53,7 +49,6 @@ export class CreateSpotPage implements OnInit {
   } 
 
   public async submitForm(): Promise<void> {
-
     var suitableForList: {Sport: string}[] = [];
 
     for (var sport of this.editSpotForm.get('sportDropdown')?.value)
@@ -62,13 +57,17 @@ export class CreateSpotPage implements OnInit {
     }
     console.log(this.editSpotForm.get('sportDropdown')?.value);
     console.log(suitableForList);
+
+    var marker = this.stateManagementService.getMainMarkerCoordinates();
+    if (!marker)
+      return;
     
     const newSpot: Spot = {
       createdBy: this.storage.getCurrentUser()?.id === 69 ? 1 : this.storage.getCurrentUser()?.id,
       name: this.editSpotForm.get('spotName')?.value,
       description: this.editSpotForm.get('spotDescription')?.value,
-      latitude: this.spotCoords.latitude,
-      longitude: this.spotCoords.longitude,
+      latitude: marker.latitude,
+      longitude: marker.longitude,
       suitableFor: suitableForList,
       image: ''
     };
@@ -83,7 +82,7 @@ export class CreateSpotPage implements OnInit {
     }
     console.log(newSpot.image);
     if (await this.apiService.postSpot(newSpot))
-      this.router.navigate(['/home', this.activatedRoute.snapshot.paramMap.get('id')]);
+      this.router.navigate(['/home']);
   }
 
   private convertToBase64(image: File): Promise<any> {

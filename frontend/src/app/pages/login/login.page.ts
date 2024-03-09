@@ -29,9 +29,7 @@ export class LoginPage implements OnInit {
     });
   }
 
-  public ngOnInit(): void {
-    this.storage.setLoggedInUser();
-  }
+  public ngOnInit(): void {}
 
   // The token should be sent in http requests to the server to authenticate requests, so the server knows who's requesting the data 
   // TODO: Fix error messages on register form???
@@ -43,7 +41,7 @@ export class LoginPage implements OnInit {
         this.loginForm.get('username')?.value == "admin" && 
         this.loginForm.get('password')?.value == "donga")
       {
-        this.router.navigate(['/home', 69]);
+        this.router.navigate(['/home']);
         this.storage.setLoggedInUser({
           id: 69,
           token: "123",
@@ -54,7 +52,7 @@ export class LoginPage implements OnInit {
       }
 
       const result = await this.apiService.login(this.loginForm.get('username')?.value, this.loginForm.get('password')?.value);
-      result ? this.router.navigate(['/home', this.storage.getCurrentUser()?.id]) : this.invalidLogin = true;
+      result ? this.router.navigate(['/home']) : this.invalidLogin = true;
     } else {
       this.invalidLogin = true;
       this.loginForm.markAllAsTouched();
@@ -74,7 +72,7 @@ export class LoginPage implements OnInit {
       if (registerResult[0] === 'ok') {
         const loginResult = await this.apiService.login(this.loginForm.get('username')?.value, this.loginForm.get('password')?.value);
         if (loginResult) {
-          this.router.navigate(['/home', this.storage.getCurrentUser()?.id]);
+          this.router.navigate(['/home']);
         } else {
           console.log('log in after register failed!!!');
         }

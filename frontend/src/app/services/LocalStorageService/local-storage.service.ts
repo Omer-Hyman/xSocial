@@ -1,22 +1,21 @@
 import { Injectable } from '@angular/core';
 import { LoggedInUser } from '../../interfaces';
+import { StateManagementService } from '../StateManagementService/state-management.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LocalStorageService {
 
-  constructor() { }
+  constructor(
+    private stateManagementService: StateManagementService
+  ) { }
 
-  public setLoggedInUser(userData?: LoggedInUser): void {
-    if (userData) {
-      const user = JSON.stringify(userData);
-      if (localStorage.getItem('userData') !== user) {
-        localStorage.setItem('userData', user);
-      }
-    } else {
-      localStorage.setItem('userData', ''); 
-      // this or just remove property
+  public setLoggedInUser(userData: LoggedInUser): void {
+    this.stateManagementService.setUserID(userData.id);
+    const user = JSON.stringify(userData);
+    if (localStorage.getItem('userData') !== user) {
+      localStorage.setItem('userData', user);
     }
     console.log('user data in local storage: ' + localStorage.getItem('userData'));
   }

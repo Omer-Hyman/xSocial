@@ -2,11 +2,10 @@ import { AfterViewInit, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, 
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import { SpotViewComponent } from '../spot-view/spot-view.component';
-import { Observable, Subject, Subscription } from 'rxjs';
 import { Coordinates, Spot } from 'src/app/interfaces';
-import { Geolocation } from '@capacitor/geolocation';
 import { ApiService } from 'src/app/services/ApiService/api.service';
 import L from 'leaflet';
+import { StateManagementService } from 'src/app/services/StateManagementService/state-management.service';
 
 @Component({
   selector: 'map-component',
@@ -17,36 +16,27 @@ import L from 'leaflet';
   }
 })
 
-export class MapComponent implements OnInit, AfterViewInit {
+export class MapComponent implements AfterViewInit {
 
   private map!: L.Map;
   private mapElement?: HTMLElement;
   private markers: L.Marker[] = [];
   private deviceLocation?: Coordinates;
   private spots!: Spot[];
-  @Input() public mapCentre?: Coordinates;
 
   constructor(
     private router: Router,
-    // private mapService: MapService,
     private modalController: ModalController,
     private activatedRoute: ActivatedRoute,
     private apiService: ApiService,
-    
-    // Probs don't need a map service now bc it's all in this component
+    private stateManagementService: StateManagementService    
   ) {}
 
-  async ngOnInit(): Promise<void> {
-    await this.getDeviceLocation();
-
-    // ID can also be gotten from localstorage
-  }
 
   ngAfterViewInit() : void {
     setTimeout(() => {
       this.initialiseMap();
-      this.setMarker({latitude: this.deviceLocation?.latitude ?? 0, longitude: this.deviceLocation?.longitude ?? 0});
-      this.setMarkersFromDB();
+      // this.setMarkersFromDB();
     }, 1000);
     // look up zone.js and change detection (https://angular.io/guide/change-detection-zone-pollution)
   }
@@ -54,23 +44,32 @@ export class MapComponent implements OnInit, AfterViewInit {
   private initialiseMap(zoom?: number): void {
     console.log("Initialising map...");
     this.mapElement = document.getElementById("map") ?? undefined;
+
     if (!this.mapElement) {
       console.warn('Not found map div!');
       return;
     }
 
     this.map = L.map(this.mapElement);
+    this.map.addLayer(
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      }
+    ));
     this.map.setView([
-      (this.mapCentre?.latitude ?? this.deviceLocation?.latitude) || 51.505,
-      (this.mapCentre?.longitude ?? this.deviceLocation?.longitude) || -0.09
+      this.deviceLocation?.latitude ?? 51.505,
+      this.deviceLocation?.longitude ?? -0.09
     ], 15);
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(this.map);
-
     this.setupMapClickedEventListener();
+
+    var marker = this.stateManagementService.getMainMarkerCoordinates();
+    if (marker) {
+      this.setMarker(marker);
+      this.map.panTo(new L.LatLng(marker.latitude, marker.longitude));
+      this.stateManagementService.deleteMainMarker();
+    }
   }
 
   private async setMarkersFromDB(): Promise<void> {
@@ -89,22 +88,13 @@ export class MapComponent implements OnInit, AfterViewInit {
 
       L.DomEvent.stopPropagation(event);
       // Is it ok for this navigate to be here or should it be from home page? From home page just adds complexity
-      this.router.navigate(['/create-spot', this.activatedRoute.snapshot.paramMap.get('id')]);
-      this.setMarker({latitude: event.latlng.lat, longitude: event.latlng.lng} as Coordinates);
+      this.router.navigate(['/create-spot']);
+      this.stateManagementService.setMainMarkerCoordinates({latitude: event.latlng.lat, longitude: event.latlng.lng});
     });
   }
 
-  private moveMap(coords: Coordinates): void {
-    console.log("panning to \nLat: " + coords.latitude + "\nLong: " + coords.longitude);
-    this.map.panTo(new L.LatLng(coords.latitude, coords.longitude));
-  }
-
-  private setMarker(coords: Coordinates, spotID?: number): L.Marker {
-    const marker = L.marker([coords.latitude, coords.longitude]).addTo(this.map).on('click', async (e) => {
-      console.log('markerClicked');
-      L.DomEvent.stopPropagation(e);
-      const spot = await this.apiService.getSpot(spotID ?? 0);
-    });
+  public setMarker(coords: Coordinates, spotID?: number): L.Marker {
+    const marker = L.marker([coords.latitude, coords.longitude]).addTo(this.map);
     this.markers.push(marker);
     return marker;
   }
@@ -119,7 +109,12 @@ export class MapComponent implements OnInit, AfterViewInit {
     return marker;
   }
 
-  private clearAllMarkers(): void {
+  public clearAllMarkersFrontend(): void {
+    for (const marker of this.markers)
+      marker.remove();
+  }
+
+  public clearAllMarkersFully(): void {
     for (const marker of this.markers)
       marker.remove();
   }
@@ -146,41 +141,6 @@ export class MapComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private async getDeviceLocation(): Promise<void> {
-    if (!await this.getLocationPermission)
-      return;
-
-    try {
-      const deviceLocation = await Geolocation.getCurrentPosition();
-      this.deviceLocation = {latitude: deviceLocation.coords.latitude, longitude: deviceLocation.coords.longitude}
-      console.log("Device location:");
-      console.log("lat: " + this.deviceLocation?.latitude);
-      console.log("long: " + this.deviceLocation?.longitude);
-    } catch (error) {
-      console.error('Error getting location', error);
-    }
-  }
-
-  private async getLocationPermission(): Promise<boolean> {
-    try {
-      const result = await Geolocation.requestPermissions();
-      if (result.location === 'granted') {
-        console.log("location permission granted");
-        return true;
-      } else {
-        console.warn('Location permission denied');
-        return false;
-      }
-    } catch (error) {
-      console.error('Error requesting location permission', error);
-      return false;
-    }
-  }
-
-  private clearMarkers(): void {
-    console.log('markers cleared!');
-    // this.mapService.clearMarkers();
-  }
 
   private async markerClickedFunction(spot: Spot): Promise<void> {
     // console.log('marker clicked');
@@ -192,6 +152,6 @@ export class MapComponent implements OnInit, AfterViewInit {
       componentProps: { spot: spot }
     });
     modal.present();
-    // this.mapService.setMarkersFromDB(); // very hacky fix
+    // this.stateManagementService.setMarkersFromDB(); // very hacky fix
   }
 }

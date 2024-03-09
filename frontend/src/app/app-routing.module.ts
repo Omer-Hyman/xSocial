@@ -5,14 +5,14 @@ import { HomePage } from './pages/home/home.page';
 import { CreateSpotPage } from './pages/create-spot/create-spot.page';
 
 const routes: Routes = [
-  // { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginPage, title: 'Login or register'},
-  // { path: 'login', component: LoginComponent, title: 'Login or register' },
-  // { path: 'map/:id', component: MapComponent, title: 'Map'},
-  { path: 'create-spot/:id', component: CreateSpotPage, title: 'Create spot' },
-  { path: 'home/:id', component: HomePage, title: 'Home' },
+  { path: 'create-spot', component: CreateSpotPage, title: 'Create spot' },
+  { path: 'home', component: HomePage, title: 'Home' },
   { path: '**', component: LoginPage, title: 'Login or register' },
 ];
+   
+// TODO: switch from route params to shared service for state management??
+// https://www.reddit.com/r/Angular2/comments/16av43w/best_way_to_pass_data_to_another_component_when/?rdt=49684
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })

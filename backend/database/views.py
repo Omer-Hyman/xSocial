@@ -63,14 +63,14 @@ class SpotViewSet(viewsets.ModelViewSet):
             Spot.objects.create(createdBy=user)
 
     @action(detail=True, methods=['GET'])
-    def get(self, request, pk=None):
+    def get(self, pk=None):
         spot = self.get_object()
         serializer = self.get_serializer(spot)
         print(serializer.data)
         return Response(serializer.data)
 
     @action(detail=False, methods=['GET'])
-    def getAll(self, request):
+    def getAll(self):
         spots = self.get_queryset()
         serializer = self.get_serializer(spots, many=True)
         return Response(serializer.data)
