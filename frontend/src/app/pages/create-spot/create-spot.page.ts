@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MapComponent } from 'src/app/components/map/map.component';
@@ -12,11 +12,13 @@ import { StateManagementService } from 'src/app/services/StateManagementService/
   templateUrl: './create-spot.page.html',
   styleUrls: ['./create-spot.page.scss'],
 })
-export class CreateSpotPage implements OnInit {  
+export class CreateSpotPage implements AfterViewInit, OnInit {  
   public editSpotForm!: FormGroup;
   private spotImage?: File;
-  public userID: string;
+  // public userID: string;
   @ViewChild(MapComponent) mapComponent!: MapComponent;
+  public location!: Coordinates;
+  public alertHeader: any;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -32,21 +34,25 @@ export class CreateSpotPage implements OnInit {
       sportDropdown: [''],
       image: []
     })
-    this.userID = this.activatedRoute.snapshot.paramMap.get('id') ?? '';
+    // this.userID = this.activatedRoute.snapshot.paramMap.get('id') ?? '';
+
+    this.location = {
+      latitude: parseFloat(this.activatedRoute.snapshot.paramMap.get('lat') ?? "0"), 
+      longitude: parseFloat(this.activatedRoute.snapshot.paramMap.get('long') ?? "0")
+    };
+    this.alertHeader = {
+      header: 'Suitable for:',
+    };
+
   }
 
   // TODO: add validation to the form
-  // TODO: Marker on centre of spot
 
-  async ngOnInit(): Promise<void> {
-
-    // this.leafletMapService.initialiseMap({latitude: this.spotCoords.latitude, longitude: this.spotCoords.longitude}, 13);
-    // this.leafletMapService.setMarker({latitude: this.spotCoords.latitude, longitude: this.spotCoords.longitude});
+  ngOnInit(): void {
   }
 
-  public test(): void{
-    console.log(this.editSpotForm.get('sportDropdown')?.value);
-  } 
+  ngAfterViewInit(): void {
+  }
 
   public async submitForm(): Promise<void> {
     var suitableForList: {Sport: string}[] = [];
@@ -58,29 +64,24 @@ export class CreateSpotPage implements OnInit {
     console.log(this.editSpotForm.get('sportDropdown')?.value);
     console.log(suitableForList);
 
-    var marker = this.stateManagementService.getMainMarkerCoordinates();
-    if (!marker)
-      return;
-    
+  
     const newSpot: Spot = {
       createdBy: this.storage.getCurrentUser()?.id === 69 ? 1 : this.storage.getCurrentUser()?.id,
       name: this.editSpotForm.get('spotName')?.value,
       description: this.editSpotForm.get('spotDescription')?.value,
-      latitude: marker.latitude,
-      longitude: marker.longitude,
+      latitude: this.location.latitude,
+      longitude: this.location.longitude,
       suitableFor: suitableForList,
       image: ''
     };
 
     if (this.spotImage) {      
       const encodedImage = await this.convertToBase64(this.spotImage);
-      if (encodedImage) {
+      if (encodedImage)
         newSpot.image = encodedImage.toString();
-      }          
     } else {
       console.log('No image!');
     }
-    console.log(newSpot.image);
     if (await this.apiService.postSpot(newSpot))
       this.router.navigate(['/home']);
   }

@@ -1,10 +1,10 @@
-import { AfterViewInit, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, Input, NgZone, OnDestroy, OnInit, Output, ViewChild, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import { SpotViewComponent } from '../spot-view/spot-view.component';
 import { Coordinates, Spot } from 'src/app/interfaces';
 import { ApiService } from 'src/app/services/ApiService/api.service';
-import L from 'leaflet';
+import Leaflet from 'leaflet';
 import { StateManagementService } from 'src/app/services/StateManagementService/state-management.service';
 
 @Component({
@@ -18,31 +18,35 @@ import { StateManagementService } from 'src/app/services/StateManagementService/
 
 export class MapComponent implements AfterViewInit {
 
-  private map!: L.Map;
+  private map!: Leaflet.Map;
   private mapElement?: HTMLElement;
-  private markers: L.Marker[] = [];
-  private deviceLocation?: Coordinates;
+  private markers: Leaflet.Marker[] = [];
   private spots!: Spot[];
+  
+  @Input() public zoomLevel = 14;
+  @Input() public zoomable = true;
+  @Input() public mapCenter?: Coordinates;
+  @Input() public temporaryMarker?: Coordinates;
+  @Input() public displayDbMarkers = true;
+  @Output() public mapClicked = new EventEmitter<Coordinates>(); 
 
   constructor(
-    private router: Router,
     private modalController: ModalController,
     private activatedRoute: ActivatedRoute,
     private apiService: ApiService,
-    private stateManagementService: StateManagementService    
+    private stateManagementService: StateManagementService,
+    private zone: NgZone,
+    private cdr: ChangeDetectorRef
   ) {}
-
 
   ngAfterViewInit() : void {
     setTimeout(() => {
       this.initialiseMap();
-      // this.setMarkersFromDB();
     }, 1000);
-    // look up zone.js and change detection (https://angular.io/guide/change-detection-zone-pollution)
+
   }
 
-  private initialiseMap(zoom?: number): void {
-    console.log("Initialising map...");
+  private async initialiseMap(): Promise<void> {
     this.mapElement = document.getElementById("map") ?? undefined;
 
     if (!this.mapElement) {
@@ -50,29 +54,60 @@ export class MapComponent implements AfterViewInit {
       return;
     }
 
-    this.map = L.map(this.mapElement);
-    this.map.addLayer(
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      }
-    ));
-    this.map.setView([
-      this.deviceLocation?.latitude ?? 51.505,
-      this.deviceLocation?.longitude ?? -0.09
-    ], 15);
+    this.map = Leaflet.map(this.mapElement, {
+      zoomControl: false,
+      minZoom: this.zoomable ? undefined : this.zoomLevel,
+      maxZoom: this.zoomable ? undefined : this.zoomLevel,
+      center: [
+        this.mapCenter?.latitude ?? this.stateManagementService.deviceLocation?.latitude ?? 0,
+        this.mapCenter?.longitude ?? this.stateManagementService.deviceLocation?.longitude ?? 0
+      ],
+      zoom: this.zoomLevel 
+    });
+
+    console.log(this.map.getCenter());
+
+    const layer = Leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    });
+
+    this.map.addLayer(layer);
+
+    if (this.displayDbMarkers)
+      await this.setMarkersFromDB();
+
+    // const marker = this.stateManagementService.getMainMarkerCoordinates();
+    if (this.temporaryMarker) {
+      this.setMarker(this.temporaryMarker);
+      this.map.panTo(new Leaflet.LatLng(this.temporaryMarker.latitude, this.temporaryMarker.longitude));
+    }
 
     this.setupMapClickedEventListener();
 
-    var marker = this.stateManagementService.getMainMarkerCoordinates();
-    if (marker) {
-      this.setMarker(marker);
-      this.map.panTo(new L.LatLng(marker.latitude, marker.longitude));
-      this.stateManagementService.deleteMainMarker();
-    }
+    this.map.flyToBounds(this.generateBoundsArray()); // may need .pad(0.1)
   }
 
-  private async setMarkersFromDB(): Promise<void> {
+  private generateBoundsArray(): Leaflet.LatLngBounds {
+    const locations: Leaflet.LatLng[] = [];
+
+    // const lat = this.mapCenter?.latitude ?? this.stateManagementService.deviceLocation?.latitude;
+    // const long = this.mapCenter?.longitude ?? this.stateManagementService.deviceLocation?.longitude;
+
+    // for (let marker of this.markers)
+    // {
+    //   if (marker.getLatLng().lat > lat + 1 ||  )
+    //   locations.push(marker.getLatLng());
+    // }
+
+    // TODO: Can see where this is going ^^
+    // just +/- 1 from center of map include those
+
+    console.log(Leaflet.latLngBounds(locations));
+
+    return Leaflet.latLngBounds(locations);
+  }
+
+  public async setMarkersFromDB(): Promise<void> {
     const spots = await this.apiService.getSpots();
     console.log(spots);
     if (spots) {
@@ -85,25 +120,29 @@ export class MapComponent implements AfterViewInit {
 
   private setupMapClickedEventListener(): void {
     this.map.on('click', (event) => {
+      Leaflet.DomEvent.stopPropagation(event);
 
-      L.DomEvent.stopPropagation(event);
       // Is it ok for this navigate to be here or should it be from home page? From home page just adds complexity
-      this.router.navigate(['/create-spot']);
-      this.stateManagementService.setMainMarkerCoordinates({latitude: event.latlng.lat, longitude: event.latlng.lng});
+      this.mapClicked.next({latitude: event.latlng.lat, longitude: event.latlng.lng});
+      this.stateManagementService.setTemporaryMarkerCoordinates({latitude: event.latlng.lat, longitude: event.latlng.lng});
     });
   }
 
-  public setMarker(coords: Coordinates, spotID?: number): L.Marker {
-    const marker = L.marker([coords.latitude, coords.longitude]).addTo(this.map);
+  public setMarker(coords: Coordinates, spotID?: number): Leaflet.Marker {
+    const marker = Leaflet.marker([coords.latitude, coords.longitude]).addTo(this.map);
     this.markers.push(marker);
     return marker;
   }
+
+  public panToLocation(coords: Coordinates): void {
+    this.map.panTo(new Leaflet.LatLng(coords.latitude, coords.longitude));
+  }
   
-  private setMarkerUsingSpot(spot: Spot) : L.Marker {
+  private setMarkerUsingSpot(spot: Spot) : Leaflet.Marker {
     console.log("Setting marker on spot:\n" + spot.name);
-    const marker = L.marker([spot.latitude, spot.longitude]).addTo(this.map).on('click', (e) => {
+    const marker = Leaflet.marker([spot.latitude, spot.longitude]).addTo(this.map).on('click', (e) => {
       console.log('markerClicked');
-      L.DomEvent.stopPropagation(e);
+      Leaflet.DomEvent.stopPropagation(e);
     });
     this.markers.push(marker);
     return marker;
@@ -120,7 +159,7 @@ export class MapComponent implements AfterViewInit {
   }
 
   private testingMarkerClicked(): void{
-    var greenIcon = L.icon({
+    var greenIcon = Leaflet.icon({
       iconUrl: "assets/icon/favicon.ico",
       iconSize:     [38, 95], 
       shadowSize:   [50, 64],
@@ -131,9 +170,9 @@ export class MapComponent implements AfterViewInit {
 
     this.map.clearAllEventListeners();
 
-    L.marker([51.512, -0.161], {icon: greenIcon}).addTo(this.map).on('click', function(e) {
+    Leaflet.marker([51.512, -0.161], {icon: greenIcon}).addTo(this.map).on('click', function(e) {
       console.log('markerClicked');
-      L.DomEvent.stopPropagation(e);
+      Leaflet.DomEvent.stopPropagation(e);
       console.log(e.latlng);
       e.originalEvent.preventDefault(); 
       // this.markerClicked.next(spot);

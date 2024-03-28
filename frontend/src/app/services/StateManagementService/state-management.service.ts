@@ -8,7 +8,7 @@ import { Geolocation } from '@capacitor/geolocation';
 export class StateManagementService {
 
   private userID!: number;
-  private mainMarker?: Coordinates;
+  private temporaryMarker?: Coordinates;
   public deviceLocation?: Coordinates;
 
   constructor() {}
@@ -21,16 +21,16 @@ export class StateManagementService {
     this.userID = userID;
   }
 
-  public getMainMarkerCoordinates(): Coordinates | undefined {
-    return this.mainMarker;
+  public getTemporaryMarkerCoordinates(): Coordinates | undefined {
+    return this.temporaryMarker;
   }
 
-  public setMainMarkerCoordinates(coords: Coordinates): void {
-    this.mainMarker = coords;
+  public setTemporaryMarkerCoordinates(coords: Coordinates): void {
+    this.temporaryMarker = coords;
   }
 
-  public deleteMainMarker(): void {
-    this.mainMarker = undefined;
+  public deleteTemporaryMarker(): void {
+    this.temporaryMarker = undefined;
   }
 
   private async getLocationPermission(): Promise<boolean> {
@@ -49,7 +49,7 @@ export class StateManagementService {
     }
   }
 
-  public async getDeviceLocation(): Promise<void> {
+  public async setDeviceLocation(): Promise<void> {
     if (!await this.getLocationPermission)
       return;
 

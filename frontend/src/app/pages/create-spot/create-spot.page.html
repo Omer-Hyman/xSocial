@@ -1,4 +1,4 @@
-<app-nav-bar title="Create spot" (titleClicked)="test()"></app-nav-bar>
+<app-nav-bar title="Create spot"></app-nav-bar>
 <ion-content>
   <form [formGroup]="editSpotForm" (ngSubmit)="submitForm()">
     <ion-list>
@@ -9,7 +9,7 @@
         <ion-input formControlName="spotDescription" placeholder="Spot description"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-select formControlName="sportDropdown" placeholder="Suitable for:" [multiple]="true" >
+        <ion-select formControlName="sportDropdown" placeholder="Suitable for:" multiple="true" aria-label="Suitable for:" [interfaceOptions]="alertHeader">
           <ion-select-option value="Skateboarding">Skateboarding</ion-select-option>
           <ion-select-option value="BMXing">BMXing</ion-select-option>
           <ion-select-option value="Scooter Riding">Scooter riding</ion-select-option>
@@ -23,5 +23,5 @@
     <ion-button type="submit">Save</ion-button>
     <ion-button [routerLink]="['/home']">Cancel</ion-button>
   </form>
-  <map-component></map-component>
+  <map-component [zoomLevel]="15" [temporaryMarker]="location" [displayDbMarkers]="false"></map-component>
 </ion-content>

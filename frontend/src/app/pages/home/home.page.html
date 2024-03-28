@@ -2,5 +2,5 @@
   <app-nav-bar title="Welcome"></app-nav-bar>
 </ion-header>
 <ion-content>
-  <map-component></map-component>
+  <map-component (mapClicked)="navigateToCreateSpot($event)"></map-component>
 </ion-content>
